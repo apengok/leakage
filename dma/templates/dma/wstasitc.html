@@ -1,0 +1,100 @@
+{% extends "dma/base.html" %}
+
+{% block title %}DMA |wstatic {{ title }}{% endblock %}
+
+<!-- head -->
+{% block head %}
+    
+    <link href="{% url 'static' 'css/wbalance.css' %}" rel="stylesheet">
+
+<style type="text/css">    
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+    
+    <div class="container" >
+    
+    
+        
+        
+        <aside class="col-sm-2 ml-sm-auto blog-sidebar">
+          
+          <div class="sidebar-module">
+            <h4>Monthly</h4>
+            <ol class="list-unstyled">
+            {% for mon in month_group %}
+              <li><a href="/dma/wbalance_mon/{{ mon }}">{{ mon }}</a></li>
+              
+            {% endfor %}
+            </ol>
+          </div>
+          
+        </aside><!-- /.blog-sidebar -->
+        
+        <div class="col-xs-7">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="tophead">
+                        <h2>集团水量统计 {{ current_mon }}月报表</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th scope="col">序号</th>
+                  <th scope="col">项目</th>
+                  <th scope="col">上月止累计</th>
+                  <th scope="col">当月</th>
+                  <th scope="col">本月止累计</th>
+                  <th scope="col">说明</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for key,summary in static_monthly.items %}
+                <tr>
+                  <th scope="row">{{  loop.index  }}</th>
+                  <td>{{ summary.name }}</td>
+                  <td>{{ summary.last_month_total }}</td>
+                  <td>{{ summary.cur_month }}</td>
+                  <td>{{ summary.cur_month_total }}</td>
+                  <td>{{ summary.note }}</td>
+                </tr>
+                {% endfor %}
+                
+                
+              </tbody>
+            </table>
+            
+        </div>    
+        
+        
+            
+        </div>
+        <aside class="col-sm-3 ml-sm-auto blog-sidebar">
+          
+          <div class="sidebar-module">
+            <span>
+            <br><br><br><br>
+            常用的漏损评价的指标主要有：<br>
+            （1）漏失率（%）=Q漏失量/Q供水量；<br>
+            （2）产销差率（%）=（ Q供水量- Q售水量）/ Q供水量；<br>
+            （3）单位管长漏失量（m³/km/h）= Q漏失量/∑L配水管总长；<br>
+            （4）基础设施漏失指数（ILI）=当前物理损失水量/不可避免物理损失水量。<br>
+            不可避免物理损失水量(L/d)=（18•Lm+0.8•Nc+25•Lp）•P <br>
+            式中——Lm：主干管长度（Km）； Nc：接户数；Lp：用户连接管总长度（Km）； P：管网平均压力（m）。
+
+            </span>
+          </div>
+          
+        </aside><!-- /.blog-sidebar -->
+
+    </div>
+    
+    
+{% endblock %}

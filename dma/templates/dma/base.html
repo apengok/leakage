@@ -1,0 +1,49 @@
+{% extends 'dma/bootstrap.html' %}
+
+{% load bootstrap3 %}
+
+
+
+
+{% block bootstrap3_content %}
+    <div class="container">
+        <h1>{% block title %}(no title){% endblock %}</h1>
+        <!-- nav bar -->
+        <nav class="navbar navbar-default ">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="url 'wbalance'">Homepage</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+              <ul class="nav navbar-nav">
+                <li><a href="{% url 'wbalance' %}">水平衡分析</a></li>	
+                <li><a href="{% url 'wstasitc' %}">水量统计报表</a></li>
+                <li><a href="{% url 'economize' %}">节能水平分析</a></li>
+                <li><a href="{% url 'dma' %}">分区管理</a></li>
+                <li><a href="{% url 'dma_summary' %}">fuck</a></li>
+                <li><a href="/map/">地图</a></li>
+              </ul>
+            </div><!--/.nav-collapse -->
+          </div>
+        </nav>
+
+        {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
+
+        {% block content %}(no content){% endblock %}
+    </div>
+    
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+{% endblock %}

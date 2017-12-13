@@ -1,0 +1,13 @@
+{% extends 'dma/base.html' %}
+{% load bootstrap3 %}
+
+{% block title %}django-bootstrap3{% endblock %}
+
+{% block content %}
+    This is <em>bootstrap3</em> for <strong>Django</strong>.
+    {% if content %}
+    {% for c in content %}
+        <p>{{ c }}</p>
+    {% endfor %}
+    {% endif %}
+{% endblock %}
