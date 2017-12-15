@@ -5,9 +5,10 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib import messages
 
-from models import Wbalance
+from models import Wbalance,ZoneTree,DmaZone
 from dma import dma_tree,dma_file,summary_file,static_monthly
 
+import json
 # Create your views here.
 def index(request):
     return render(request,'dma/home.html')
@@ -52,9 +53,30 @@ def economize(request):
     
 def dma(request):
     
+    #p_names = 
     
-    dma_file['name']['value'] = dma_tree[0]['text'].decode('utf-8')
-    return render(request,'dma/dma.html',{'json_data':dma_tree,'dma_content':dma_file})
+    dma_dist = {}
+    def as_tree(na):
+        
+        zone_collections = ZoneTree.objects.filter(parent_level=na)
+        for zone in zone_collections:
+            p_name = zone.parent_level
+            if p_name not in dma_dist.keys():
+                tmp_ = {}
+                tmp_['text'] = p_name
+                tmp_['nodes'] = []
+                dma_dist[p_name]=[]
+                dma_dist[p_name].append(zone.zone_name)
+            else:
+                dma_dist[p_name].append(zone.zone_name)
+            as_tree(zone.zone_name)
+        #print dma_dist
+        return dma_dist
+    #return HttpResponse( json.dumps(as_tree('root') ))
+    jds=json.dumps(as_tree('root'))
+    print jds
+    dma_file['zone_name']['value'] = dma_tree[0]['text'].decode('utf-8')
+    return render(request,'dma/dma.html',{'json_data': jds,'dma_content':dma_file})
     
 def sub_dma(request,fullurl):
     try:

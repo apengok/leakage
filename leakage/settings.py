@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'leakage.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',#postgresql_psycopg2  or postgis django.db.backends.postgresql_psycopg2
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',#postgresql_psycopg2  or django.contrib.gis.db.backends.postgis or django.db.backends.postgresql_psycopg2
         'NAME': 'scada',
         'USER': 'scada',
         'PASSWORD': 'scada',

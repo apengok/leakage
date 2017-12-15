@@ -27,6 +27,8 @@
           
            <div id="treeview1" class=""></div>
            
+           <div id="treeview2" class=""></div>
+           
         </aside><!-- /.blog-sidebar -->
         
         <div class="col-xs-7">
@@ -164,6 +166,12 @@
     $('#treeview1').treeview({
         enableLinks: true,
       data: dma_tree2 //{{ json_data|safe }}
+    });
+    
+    $('#treeview2').treeview({
+        enableLinks: true,
+      data: {{ json_data|safe }}
+      
     });
     
     

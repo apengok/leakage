@@ -4,31 +4,30 @@ from collections import OrderedDict
 #分区资料
 dma_file = OrderedDict()
 
-dma_file['name']={'value':'somecity','name':'分区名称','note':''}
-dma_file['zone']={'value':'1000','name':'分区面积（平方公里）','note':''}
-dma_file['water_in']={'value':14490,'name':'分区进水量（ m3）','note':''}
-dma_file['regist_home']={'value':10000,'name':'注册用户总数（万户）','note':''}
+dma_file['zone_name']={'value':'somecity','name':'分区名称','note':''}
+dma_file['zone_area']={'value':'1000','name':'分区面积（平方公里）','note':''}
+dma_file['zone_water_in']={'value':14490,'name':'分区进水量（ m3）','note':''}
+dma_file['registed_user']={'value':10000,'name':'注册用户总数（万户）','note':''}
 dma_file['pipeline_length']={'value':2000,'name':'管线长度（ km）','note':''}
-dma_file['next_distribute_num']={'value':10,'name':'下一级分区数量（个）','note':''}
+dma_file['sub_zone_num']={'value':10,'name':'下一级分区数量（个）','note':''}
 dma_file['dma_num']={'value':20,'name':'分区中 DMA 数量（个）','note':''}
-dma_file['measure_read_rate']={'value':89,'name':'水表抄见率（ %）','note':''}
-dma_file['measure_right_rate']={'value':95,'name':'抄表准确率（ %）','note':''}
-dma_file['distribute_sale']={'value':12345,'name':'分区销售水量（ m3）','note':'该分区销售水量'}
-dma_file['night_min_flow']={'value':2000,'name':'夜间最小流量（ m3）','note':'仅适用于 DMA'}
+dma_file['measure_per_actual']={'value':89,'name':'水表抄见率（ %）','note':'抄表数量与实际立户水表数量一致程度'}
+dma_file['measure_precision']={'value':95,'name':'抄表准确率（ %）','note':''}
+dma_file['zone_sale']={'value':12345,'name':'分区销售水量（ m3）','note':'该分区销售水量'}
+dma_file['nightflow_min']={'value':2000,'name':'夜间最小流量（ m3）','note':'仅适用于 DMA'}
 dma_file['online_presspoint_num']={'value':10,'name':'在线压力点数量（个）','note':''}
-dma_file['online_flow_calc_num']={'value':20,'name':'在线流量计数量（个）','note':''}
+dma_file['online_flowmeter_num']={'value':20,'name':'在线流量计数量（个）','note':''}
 dma_file['online_water_quality_m_num']={'value':30,'name':'在线水质监测点数量（个）','note':''}
-dma_file['charge_remote_water_num']={'value':1000,'name':'收费用远传水表数量（只）','note':''}
-dma_file['charge_remote_water_percent']={'value':70,'name':'收费用远传水表水量占分区销 水量比（ %）','note':''}
-dma_file['distribute_detect_leak_num']={'value':5,'name':'分区探出漏点总数（个）','note':''}
+dma_file['charge_watermeter_num']={'value':1000,'name':'收费用远传水表数量（只）','note':''}
+dma_file['charge_waterwater_percent']={'value':70,'name':'收费用远传水表水量占分区销 水量比（ %）','note':''}
+dma_file['zone_detect_leak_num']={'value':5,'name':'分区探出漏点总数（个）','note':''}
 dma_file['leak_water']={'value':100,'name':'漏失水量（ m3）','note':''}
 dma_file['leak_obscur_water']={'value':30,'name':'暗漏水量（ m3）','note':''}
 dma_file['leak_obvious_water']={'value':70,'name':'明漏水量（ m3）','note':''}
 dma_file['leak_rate']={'value':12,'name':'漏损率（ %）','note':''}
 dma_file['pressure_quality']={'value':90,'name':'压力合格率（ %）','note':''}
 dma_file['water_quality']={'value':99,'name':'水质合格率（ %）','note':''}
-dma_file['distribute_pressure']={'value':30,'name':'分区内压力（ MPa）','note':''}
-
+dma_file['zone_inner_pressure']={'value':30,'name':'分区内压力（ MPa）','note':''}
 
 #汇总资料
 summary_file = OrderedDict()
