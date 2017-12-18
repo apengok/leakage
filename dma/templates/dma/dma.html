@@ -25,9 +25,10 @@
         
         <aside class="col-sm-3 ml-sm-auto blog-sidebar">
           
-           <div id="treeview1" class=""></div>
            
-           <div id="treeview2" class=""></div>
+           <div id="treeview3" class="">
+            {% include 'dma/includes/dmatree.html' %}
+           </div>
            
         </aside><!-- /.blog-sidebar -->
         
@@ -77,104 +78,6 @@
     <script src="{%  static 'dma/assets/jquery-2.2.4.min.js' %} "></script>
     <script src="{%  static 'dma/assets/bootstrap-treeview.min.js' %} "></script>
     
-    <script type="text/javascript">
-    
-    dma_tree2 = [
-    {
-        'text':'深圳市',
-        'href':'#',
-        'nodes':[
-            {
-                'text':'南山区',
-                'href':'/sub_dma/南山区',
-                'nodes':[
-                    {
-                        'text':'西丽',
-                        'href':'/sub_dma/南山区/西丽',
-                        'nodes':[
-                            {
-                        'text':'asdf',
-                        'href':'/sub_dma/南山区/西丽',
-                        'nodes':[
-                        
-                        ]
-                    },
-                    {
-                        'text':'蛇口12',
-                        'href':'/sub_dma/南山区/蛇口12',
-                        'nodes':[]
-                    },
-                    {
-                        'text':'桃源12',
-                        'href':'/sub_dma/南山区/桃源12',
-                        'nodes':[]
-                    },
-                        ]
-                    },
-                    {
-                        'text':'蛇口',
-                        'href':'/sub_dma/南山区/蛇口',
-                        'nodes':[]
-                    },
-                    {
-                        'text':'桃源',
-                        'href':'/sub_dma/南山区/桃源',
-                        'nodes':[]
-                    },
-                ]
-            },
-            {
-                'text':'福田区',
-                'href':'/sub_dma/福田区',
-                'nodes':[]
-            },
-            {
-                'text':'罗湖区',
-                'href':'/sub_dma/罗湖区',
-                'nodes':[]
-            },
-            {
-                'text':'宝安区',
-                'href':'/sub_dma/宝安区',
-                'nodes':[]
-            },
-            {
-                'text':'龙华区',
-                'href':'/sub_dma/龙华区',
-                'nodes':[]
-            },
-            {
-                'text':'盐田区',
-                'href':'/sub_dma/盐田区',
-                'nodes':[]
-            },
-            {
-                'text':'坪山区',
-                'href':'/sub_dma/坪山区',
-                'nodes':[]
-            }
-        ]
-    },
-    {
-        'text': '汇总资料',
-        'href': "/dma/dma_summary/",
-        'tags': ['0']
-    },
-]
 
-    
-    $('#treeview1').treeview({
-        enableLinks: true,
-      data: dma_tree2 //{{ json_data|safe }}
-    });
-    
-    $('#treeview2').treeview({
-        enableLinks: true,
-      data: {{ json_data|safe }}
-      
-    });
-    
-    
-    </script>
     
 {% endblock %}

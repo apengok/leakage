@@ -31,9 +31,6 @@ ALLOWED_HOSTS = ['192.168.1.145',]
 # Application definition
 
 INSTALLED_APPS = [
-    'dma',
-    'map',
-    'bootstrap3',
     'django.contrib.gis',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'mptt',
+    'bootstrap3',
+    'dma',
+    'map',
 ]
 
 MIDDLEWARE = [
@@ -92,9 +93,14 @@ DATABASES = {
         'PASSWORD': 'scada',
         'HOST': 'localhost',
         'PORT': '5432',
+    },
+    'dma_db':{
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'dma_db.sqlite3'),
     }
 }
 
+DATABASE_ROUTERS = ['dma.routers.DmaRouter', ]
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators

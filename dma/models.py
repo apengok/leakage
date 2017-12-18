@@ -4,8 +4,11 @@ from __future__ import unicode_literals
 #from django.db import models
 from django.contrib.gis.db import models
 from django.utils.functional import lazy
+from django.core.urlresolvers import reverse
+from mptt.models import MPTTModel, TreeForeignKey
 
 # Create your models here.
+
 
 class Wbalance(models.Model):
     name = models.CharField(unique=True, max_length=64, blank=True, null=True)
@@ -33,29 +36,25 @@ class Wbalance(models.Model):
         return '<Wbalance %s>'%(self.name)
         
     
-class ZoneTree(models.Model):
-    LEVEL_CHOICE = (
-        (0,'root'),
-        (1,'level 1'),
-        (2,'level 2'),
-        (3,'level 3'),
-        (4,'level 4'),
-    )
-    id = models.AutoField(primary_key=True)
+class ZoneTree(MPTTModel):
+    name = models.CharField(max_length=50, unique=True)
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
+    slug = models.SlugField()
     
-    zone_level = models.IntegerField(blank=True, null=True,choices=LEVEL_CHOICE)
-    zone_name = models.CharField(max_length=256,unique=True,blank=True, null=True)
-    
-    parent_level = models.CharField(max_length=256,blank=True, null=True)
-    
-    href = models.CharField(max_length=256,unique=True,blank=True, null=True)
-    
-    class Meta:
-        db_table = 'zonetree'
+    def get_absolute_url(self):
+        return reverse('sub_dma', kwargs={'path': self.get_path()})
+
+    class MPTTMeta:
+        order_insertion_by = ['name']
         
-         
+    class Meta:
+        
+        unique_together = ('slug', 'parent')
+        db_table = 'zonetree'
+    
+
     def __unicode__(self):
-        return self.zone_name
+        return self.name
         
     
         
@@ -90,9 +89,12 @@ class DmaZone(models.Model):
     water_quality = models.FloatField(blank=True, null=True)
     zone_inner_pressure = models.FloatField(blank=True, null=True)
 
-    zone = models.ForeignKey(ZoneTree, on_delete=models.CASCADE,blank=True, null=True)
+    #zone = models.ForeignKey(ZoneTree, on_delete=models.CASCADE,blank=True, null=True)
+    zone = TreeForeignKey(ZoneTree, verbose_name='zone tree', related_name='dmazone',null=True, blank=True)
+    slug = models.SlugField()
 
     class Meta:
+        unique_together = ('slug', 'zone')
         db_table = 'dmazone'
         
 

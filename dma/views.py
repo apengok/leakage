@@ -50,55 +50,24 @@ def economize(request):
 
     return render(request,'dma/economize.html')
     
+def show_genres(request):
+    return render(request,"dma/includes/dmatree.html",
+                          {'nodes':ZoneTree.objects.all()})
     
 def dma(request):
+    messages.info(request,'dma')
     
-    #p_names = 
+    #dma_file['zone_name']['value'] = dma_tree[0]['text'].decode('utf-8')
+    return render(request,'dma/dma.html',{'dma_content':dma_file,'nodes':ZoneTree.objects.all()})
     
-    dma_dist = {}
-    def as_tree(na):
-        
-        zone_collections = ZoneTree.objects.filter(parent_level=na)
-        for zone in zone_collections:
-            p_name = zone.parent_level
-            if p_name not in dma_dist.keys():
-                tmp_ = {}
-                tmp_['text'] = p_name
-                tmp_['nodes'] = []
-                dma_dist[p_name]=[]
-                dma_dist[p_name].append(zone.zone_name)
-            else:
-                dma_dist[p_name].append(zone.zone_name)
-            as_tree(zone.zone_name)
-        #print dma_dist
-        return dma_dist
-    #return HttpResponse( json.dumps(as_tree('root') ))
-    jds=json.dumps(as_tree('root'))
-    print jds
-    dma_file['zone_name']['value'] = dma_tree[0]['text'].decode('utf-8')
-    return render(request,'dma/dma.html',{'json_data': jds,'dma_content':dma_file})
+def sub_dma(request,path,instance, extra):
+    print 'path:',path
+    messages.info(request,path)
     
-def sub_dma(request,fullurl):
-    try:
-        namelist = fullurl.split('/')
-        if len(namelist) == 2:
-            dma_name = namelist[1]
-            dma_file.get('name')['value']=dma_name
-        if len(namelist) == 3:
-            dma_name = namelist[1]
-            sub_name = namelist[2]
-            dma_file.get('name')['value']=sub_name
-        else:
-            dma_file.get('name')['value']=namelist[-1]
-        messages.add_message(request, messages.INFO, "you selected:%s"%(fullurl,))
-        
-    except :
-        namelist = fullurl.split('/')
-        messages.debug(request, "you selected:%s-%s"%(fullurl,' '.join(namelist)))
-        messages.error(request, 'invalid dma name')
-        
-    #dma_file['name']['value'] = dma_name
-    return render(request,'dma/dma.html',{'json_data':dma_tree,'dma_content':dma_file})
+    dma_file['zone_name']['value'] = instance.name if instance else 'fuck'
+    return render(request,'dma/dma.html',{
+    'nodes':ZoneTree.objects.all(),
+    'dma_content':dma_file})
 
 def dma_summary(request):
        
