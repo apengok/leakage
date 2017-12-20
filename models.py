@@ -7,1304 +7,1451 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from __future__ import unicode_literals
 
-from django.db import models
+from django.contrib.gis.db import models
 
 
-class AlarmShareDayTax(models.Model):
-    pid = models.IntegerField(primary_key=True)
-    readtime = models.CharField(max_length=20)
-    simid = models.CharField(max_length=20)
-    flux = models.FloatField(blank=True, null=True)
-    totalflux = models.FloatField(blank=True, null=True)
-    pressure = models.FloatField(blank=True, null=True)
-    warning = models.CharField(max_length=50)
-    warningdesc = models.CharField(max_length=20)
+class Branchnode(models.Model):
+    nodeid = models.IntegerField(db_column='NodeId', primary_key=True)  # Field name made lowercase.
+    nodename = models.CharField(db_column='NodeName', max_length=30)  # Field name made lowercase.
+    energynodeid = models.IntegerField(db_column='EnergyNodeId', blank=True, null=True)  # Field name made lowercase.
+    metermodelid = models.IntegerField(db_column='MeterModelId', blank=True, null=True)  # Field name made lowercase.
+    maxload = models.CharField(db_column='MaxLoad', max_length=10, blank=True, null=True)  # Field name made lowercase.
+    monthlimit = models.CharField(db_column='MonthLimit', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    meterbottomvalue = models.CharField(db_column='MeterBottomValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    cumulativevalue = models.CharField(db_column='CumulativeValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    invalidstrdatetime = models.CharField(db_column='InvalidStrDateTime', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    changedate = models.CharField(db_column='ChangeDate', max_length=20, blank=True, null=True)  # Field name made lowercase.
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    parentnodeid = models.IntegerField(db_column='ParentNodeId', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
-        db_table = 'alarm_share_day_tax'
+        db_table = 'branchnode'
 
 
-class Amrsparam(models.Model):
-    paramkey = models.CharField(primary_key=True, max_length=64)
-    paramvalue = models.CharField(max_length=64)
+class Branchnodeext(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    extname = models.CharField(db_column='ExtName', max_length=64)  # Field name made lowercase.
+    exttag = models.CharField(db_column='ExtTag', max_length=256, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
-        db_table = 'amrsparam'
+        db_table = 'branchnodeext'
+        unique_together = (('branchnodeid', 'extname'),)
 
 
-class DmDeviceType(models.Model):
-    typename = models.CharField(primary_key=True, max_length=100)
-    tablename = models.CharField(unique=True, max_length=100)
+class Building(models.Model):
+    id = models.IntegerField(db_column='Id', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(db_column='Name', max_length=128, blank=True, null=True)  # Field name made lowercase.
+    area = models.CharField(db_column='Area', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    airarea = models.CharField(db_column='AirArea', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    address = models.CharField(db_column='Address', max_length=256, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
-        db_table = 'dm_device_type'
+        db_table = 'building'
 
 
-class DmEnumConfig(models.Model):
-    tablename = models.CharField(primary_key=True, max_length=100)
-    fieldname = models.CharField(max_length=100)
-    itemid = models.IntegerField()
-    itemcaption = models.CharField(max_length=100)
+class Emsparam(models.Model):
+    paramkey = models.CharField(db_column='paramKey', primary_key=True, max_length=64)  # Field name made lowercase.
+    paramvalue = models.CharField(db_column='paramValue', max_length=64)  # Field name made lowercase.
 
     class Meta:
         managed = False
-        db_table = 'dm_enum_config'
-        unique_together = (('tablename', 'fieldname', 'itemid'),)
+        db_table = 'emsparam'
 
 
-class DmFieldsConfig(models.Model):
-    tablename = models.CharField(primary_key=True, max_length=100)
-    fieldname = models.CharField(max_length=100)
-    fieldcaption = models.CharField(max_length=100, blank=True, null=True)
-    fieldlength = models.IntegerField(blank=True, null=True)
-    fieldtype = models.IntegerField()
-    fieldisrequired = models.CharField(max_length=1)
-    fieldisunique = models.CharField(max_length=1, blank=True, null=True)
-    fieldisprimary = models.CharField(max_length=1, blank=True, null=True)
+class Energynode(models.Model):
+    nodeid = models.IntegerField(db_column='NodeId', primary_key=True)  # Field name made lowercase.
+    nodename = models.CharField(db_column='NodeName', max_length=30)  # Field name made lowercase.
+    energyflag = models.IntegerField(db_column='EnergyFlag', blank=True, null=True)  # Field name made lowercase.
+    parentnodeid = models.IntegerField(db_column='ParentNodeId', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
-        db_table = 'dm_fields_config'
-        unique_together = (('tablename', 'fieldname'),)
+        db_table = 'energynode'
 
 
-class DmGlobalDevice(models.Model):
-    deviceid = models.IntegerField(primary_key=True)
-    name = models.CharField(unique=True, max_length=100)
-    type = models.CharField(max_length=100)
-    parent_name = models.CharField(max_length=100, blank=True, null=True)
+class HdbDay2015(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'dm_global_device'
+        db_table = 'hdb_day_2015'
+        unique_together = (('branchnodeid', 'date'),)
 
 
-class FlowShareDayTax(models.Model):
-    pid = models.IntegerField(primary_key=True)
-    readtime = models.CharField(max_length=20)
-    simid = models.CharField(max_length=20)
-    flux = models.FloatField(blank=True, null=True)
-    plustotalflux = models.FloatField(blank=True, null=True)
-    reversetotalflux = models.FloatField(blank=True, null=True)
-    warning = models.CharField(max_length=50)
-    warningdesc = models.CharField(max_length=20)
+class HdbDay2016(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2016'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2017(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2017'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2018(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2018'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2019(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2019'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2020(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2020'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2021(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2021'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2022(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2022'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2023(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2023'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2024(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2024'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2025(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2025'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2026(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2026'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2027(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2027'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2028(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2028'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2029(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2029'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2030(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2030'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2031(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2031'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2032(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2032'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2033(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2033'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2034(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2034'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbDay2035(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    meterzerovalue = models.CharField(db_column='MeterZeroValue', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_day_2035'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2015(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2015'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2016(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2016'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2017(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2017'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2018(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2018'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2019(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2019'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2020(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2020'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2021(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2021'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2022(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2022'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2023(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2023'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2024(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2024'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2025(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2025'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2026(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2026'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2027(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2027'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2028(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2028'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2029(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2029'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2030(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2030'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2031(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2031'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2032(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2032'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2033(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2033'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2034(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2034'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbHour2035(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_hour_2035'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbMonth(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_month'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbQuarter(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_quarter'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2015(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2015'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2016(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2016'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2017(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2017'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2018(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2018'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2019(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2019'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2020(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2020'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2021(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2021'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2022(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2022'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2023(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2023'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2024(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2024'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2025(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2025'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2026(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2026'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2027(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2027'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2028(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2028'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2029(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2029'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2030(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2030'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2031(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2031'
+        unique_together = (('branchnodeid', 'date'),)
+
+
+class HdbSampling2032(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
 
-    class Meta:
-        managed = False
-        db_table = 'flow_share_day_tax'
-
-
-class GCloudlayer(models.Model):
-    layername = models.CharField(max_length=200)
-    tablename = models.CharField(max_length=200)
-    layerdesc = models.CharField(max_length=250, blank=True, null=True)
-    fastquery = models.SmallIntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer'
-
-
-class GCloudlayerMetaDlzxc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_dlzxc'
-
-
-class GCloudlayerMetaDmdc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_dmdc'
-
-
-class GCloudlayerMetaDmxc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_dmxc'
-
-
-class GCloudlayerMetaDwjcdc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_dwjcdc'
-
-
-class GCloudlayerMetaFzdc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_fzdc'
-
-
-class GCloudlayerMetaFzxc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_fzxc'
-
-
-class GCloudlayerMetaGxdc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_gxdc'
-
-
-class GCloudlayerMetaGxxc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_gxxc'
-
-
-class GCloudlayerMetaJmddc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_jmddc'
-
-
-class GCloudlayerMetaJmdmc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_jmdmc'
-
-
-class GCloudlayerMetaJmdxc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_jmdxc'
-
-
-class GCloudlayerMetaJtdc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_jtdc'
-
-
-class GCloudlayerMetaJtmc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_jtmc'
-
-
-class GCloudlayerMetaJtxc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_jtxc'
-
-
-class GCloudlayerMetaMczjc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_mczjc'
-
-
-class GCloudlayerMetaSxGsWsConcentrator(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_gs_ws_concentrator'
-
-
-class GCloudlayerMetaSxGsWsConnector(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_gs_ws_connector'
-
-
-class GCloudlayerMetaSxGsWsDrainValve(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_gs_ws_drain_valve'
-
-
-class GCloudlayerMetaSxGsWsExEquipment(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_gs_ws_ex_equipment'
-
-
-class GCloudlayerMetaSxGsWsFireHydrant(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_gs_ws_fire_hydrant'
-
-
-class GCloudlayerMetaSxGsWsFlowMeter(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_gs_ws_flow_meter'
-
-
-class GCloudlayerMetaSxGsWsForcePump(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_gs_ws_force_pump'
-
-
-class GCloudlayerMetaSxGsWsMetabox(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_gs_ws_metabox'
-
-
-class GCloudlayerMetaSxGsWsPipe(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_gs_ws_pipe'
-
-
-class GCloudlayerMetaSxGsWsSourceWater(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_gs_ws_source_water'
-
-
-class GCloudlayerMetaSxGsWsValve(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_gs_ws_valve'
-
-
-class GCloudlayerMetaSxGsWsValveWell(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_gs_ws_valve_well'
-
-
-class GCloudlayerMetaSxGsWsVentValve(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_gs_ws_vent_valve'
-
-
-class GCloudlayerMetaSxGsWsWaterMeter(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_gs_ws_water_meter'
-
-
-class GCloudlayerMetaSxGsWsWatermeterBasin(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_gs_ws_watermeter_basin'
-
-
-class GCloudlayerMetaSxQdzdtMapLayer(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sx_qdzdt_map_layer'
-
-
-class GCloudlayerMetaSxdc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sxdc'
-
-
-class GCloudlayerMetaSxmc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sxmc'
-
-
-class GCloudlayerMetaSxxc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sxxc'
-
-
-class GCloudlayerMetaSxzxc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_sxzxc'
-
-
-class GCloudlayerMetaZbdc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_zbdc'
-
-
-class GCloudlayerMetaZbmc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_zbmc'
-
-
-class GCloudlayerMetaZbxc(models.Model):
-    metaid = models.IntegerField(primary_key=True)
-    metaname = models.CharField(max_length=200, blank=True, null=True)
-    bounds_size = models.FloatField(blank=True, null=True)
-    blockdata = models.BinaryField(blank=True, null=True)
-    bounds_geom = models.TextField()  # This field type is a guess.
-    geomdata = models.TextField(blank=True, null=True)  # This field type is a guess.
-    geomjson = models.TextField(blank=True, null=True)
-    id = models.CharField(max_length=20, blank=True, null=True)
-    user_define = models.CharField(max_length=50, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'g_cloudlayer_meta_zbxc'
-
-
-class HdbTianhouBig(models.Model):
-    id = models.IntegerField(primary_key=True)
-    rvalue = models.CharField(max_length=30, blank=True, null=True)
-    fvalue = models.CharField(max_length=30, blank=True, null=True)
-    meterstate = models.CharField(max_length=30, blank=True, null=True)
-    commstate = models.CharField(max_length=30, blank=True, null=True)
-    rtime = models.CharField(max_length=30, blank=True, null=True)
-    lastrvalue = models.CharField(max_length=30, blank=True, null=True)
-    lastrtime = models.CharField(max_length=30, blank=True, null=True)
-    dosage = models.CharField(max_length=30, blank=True, null=True)
-    user_watermeter_id = models.CharField(max_length=32)
-
-    class Meta:
-        managed = False
-        db_table = 'hdb_tianhou_big'
-
-
-class Hdbrecord(models.Model):
-    id = models.IntegerField(primary_key=True)
-    hdate = models.CharField(max_length=30, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'hdbrecord'
-
-
-class PressShareDayTax(models.Model):
-    pid = models.IntegerField(primary_key=True)
-    readtime = models.CharField(max_length=20)
-    simid = models.CharField(max_length=20)
-    pressure = models.FloatField(blank=True, null=True)
-    warning = models.CharField(max_length=50)
-    warningdesc = models.CharField(max_length=20)
-
-    class Meta:
-        managed = False
-        db_table = 'press_share_day_tax'
-
-
-class UserWatermeter(models.Model):
-    id = models.CharField(primary_key=True, max_length=32)
-    numbersth = models.CharField(max_length=30, blank=True, null=True)
-    roomname = models.CharField(max_length=128, blank=True, null=True)
-    nodeaddr = models.CharField(max_length=30, blank=True, null=True)
-    wateraddr = models.CharField(max_length=30, blank=True, null=True)
-    rvalue = models.CharField(max_length=30, blank=True, null=True)
-    metertype = models.CharField(max_length=30, blank=True, null=True)
-    fvalue = models.CharField(max_length=30, blank=True, null=True)
-    meterstate = models.CharField(max_length=30, blank=True, null=True)
-    commstate = models.CharField(max_length=30, blank=True, null=True)
-    rtime = models.CharField(max_length=30, blank=True, null=True)
-    lastrvalue = models.CharField(max_length=30, blank=True, null=True)
-    lastrtime = models.CharField(max_length=30, blank=True, null=True)
-    dosage = models.CharField(max_length=30, blank=True, null=True)
-    islargecalibermeter = models.IntegerField(blank=True, null=True)
-    metering_equipment_id = models.CharField(max_length=20)
-
-    class Meta:
-        managed = False
-        db_table = 'user_watermeter'
-
-
-class Wbalance(models.Model):
-    name = models.CharField(unique=True, max_length=64, blank=True, null=True)
-    totoal_in = models.FloatField(blank=True, null=True)
-    auth_use = models.FloatField(blank=True, null=True)
-    loss = models.FloatField(blank=True, null=True)
-    charge_auth = models.FloatField(blank=True, null=True)
-    uncharge_auth = models.FloatField(blank=True, null=True)
-    charge_measure = models.FloatField(blank=True, null=True)
-    charge_unmeasure = models.FloatField(blank=True, null=True)
-    uncharge_measure = models.FloatField(blank=True, null=True)
-    uncharge_unmeasure = models.FloatField(blank=True, null=True)
-    apparent_loss = models.FloatField(blank=True, null=True)
-    actual_loss = models.FloatField(blank=True, null=True)
-    unauth_use = models.FloatField(blank=True, null=True)
-    statistic_error = models.FloatField(blank=True, null=True)
-    money_back = models.FloatField(blank=True, null=True)
-    money_waste = models.FloatField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'wbalance'
-
-
-class WsConcentrator(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    name = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    community = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    address = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    commdev = models.CharField(max_length=30, blank=True, null=True)
-    devaddr = models.CharField(max_length=30, blank=True, null=True)
-    commmodel = models.CharField(max_length=64, blank=True, null=True)
-    commparam = models.CharField(max_length=64, blank=True, null=True)
-    tel = models.CharField(max_length=30, blank=True, null=True)
-    netparam = models.CharField(max_length=30, blank=True, null=True)
-    manufacturer = models.CharField(max_length=32, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff = models.CharField(max_length=50, blank=True, null=True)
-    location_x = models.FloatField(blank=True, null=True)
-    location_y = models.FloatField(blank=True, null=True)
-    memo = models.CharField(max_length=256, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ws_concentrator'
-
-
-class WsConnector(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    name = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff = models.CharField(max_length=50, blank=True, null=True)
-    location_x = models.FloatField(blank=True, null=True)
-    location_y = models.FloatField(blank=True, null=True)
-    memo = models.CharField(max_length=256, blank=True, null=True)
-    type = models.CharField(max_length=10, blank=True, null=True)
-    altitude = models.FloatField(blank=True, null=True)
-    depth = models.FloatField(blank=True, null=True)
-    caliber = models.FloatField(blank=True, null=True)
-    material = models.CharField(max_length=256, blank=True, null=True)
-    burying = models.CharField(max_length=256, blank=True, null=True)
-    angle = models.FloatField(blank=True, null=True)
-    area = models.CharField(max_length=256, blank=True, null=True)
-    road = models.CharField(max_length=256, blank=True, null=True)
-    unit = models.CharField(max_length=256, blank=True, null=True)
-    project_ref_count = models.IntegerField(blank=True, null=True)
-    op_vaild = models.IntegerField(blank=True, null=True)
-    project_no = models.CharField(max_length=256, blank=True, null=True)
-    external_code = models.CharField(max_length=256, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ws_connector'
-
-
-class WsDrainValve(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    name = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff = models.CharField(max_length=50, blank=True, null=True)
-    location_x = models.FloatField(blank=True, null=True)
-    location_y = models.FloatField(blank=True, null=True)
-    memo = models.CharField(max_length=256, blank=True, null=True)
-    altitude = models.FloatField(blank=True, null=True)
-    depth = models.FloatField(blank=True, null=True)
-    caliber = models.FloatField(blank=True, null=True)
-    material = models.CharField(max_length=256, blank=True, null=True)
-    burying = models.CharField(max_length=256, blank=True, null=True)
-    angle = models.FloatField(blank=True, null=True)
-    area = models.CharField(max_length=256, blank=True, null=True)
-    road = models.CharField(max_length=256, blank=True, null=True)
-    unit = models.CharField(max_length=256, blank=True, null=True)
-    project_ref_count = models.IntegerField(blank=True, null=True)
-    op_vaild = models.IntegerField(blank=True, null=True)
-    project_no = models.CharField(max_length=256, blank=True, null=True)
-    external_code = models.CharField(max_length=256, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ws_drain_valve'
-
-
-class WsExEquipment(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    name = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff = models.CharField(max_length=50, blank=True, null=True)
-    location_x = models.FloatField(blank=True, null=True)
-    location_y = models.FloatField(blank=True, null=True)
-    memo = models.CharField(max_length=256, blank=True, null=True)
-    altitude = models.FloatField(blank=True, null=True)
-    depth = models.FloatField(blank=True, null=True)
-    caliber = models.FloatField(blank=True, null=True)
-    material = models.CharField(max_length=256, blank=True, null=True)
-    burying = models.CharField(max_length=256, blank=True, null=True)
-    angle = models.FloatField(blank=True, null=True)
-    area = models.CharField(max_length=256, blank=True, null=True)
-    road = models.CharField(max_length=256, blank=True, null=True)
-    unit = models.CharField(max_length=256, blank=True, null=True)
-    project_ref_count = models.IntegerField(blank=True, null=True)
-    op_vaild = models.IntegerField(blank=True, null=True)
-    project_no = models.CharField(max_length=256, blank=True, null=True)
-    external_code = models.CharField(max_length=256, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ws_ex_equipment'
-
-
-class WsExResourceProperty(models.Model):
-    tablename = models.CharField(primary_key=True, max_length=128)
-    fieldname = models.CharField(max_length=128)
-    fieldtype = models.IntegerField(blank=True, null=True)
-    fieldlength = models.IntegerField(blank=True, null=True)
-    caption = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    enabled = models.IntegerField(blank=True, null=True)
-    mapping_column_no = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ws_ex_resource_property'
-        unique_together = (('tablename', 'fieldname'),)
-
-
-class WsExResourcePropertyEnumDefine(models.Model):
-    tablename = models.CharField(primary_key=True, max_length=128)
-    fieldname = models.CharField(max_length=128)
-    enumvalue = models.IntegerField()
-    enumcaption = models.CharField(max_length=128)
-
-    class Meta:
-        managed = False
-        db_table = 'ws_ex_resource_property_enum_define'
-        unique_together = (('tablename', 'fieldname', 'enumvalue'),)
-
-
-class WsExResourceType(models.Model):
-    tablename = models.CharField(primary_key=True, max_length=128)
-    caption = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ws_ex_resource_type'
-
-
-class WsFireHydrant(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    name = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff = models.CharField(max_length=50, blank=True, null=True)
-    location_x = models.FloatField(blank=True, null=True)
-    location_y = models.FloatField(blank=True, null=True)
-    memo = models.CharField(max_length=256, blank=True, null=True)
-    altitude = models.FloatField(blank=True, null=True)
-    depth = models.FloatField(blank=True, null=True)
-    caliber = models.FloatField(blank=True, null=True)
-    material = models.CharField(max_length=256, blank=True, null=True)
-    burying = models.CharField(max_length=256, blank=True, null=True)
-    angle = models.FloatField(blank=True, null=True)
-    area = models.CharField(max_length=256, blank=True, null=True)
-    road = models.CharField(max_length=256, blank=True, null=True)
-    unit = models.CharField(max_length=256, blank=True, null=True)
-    project_ref_count = models.IntegerField(blank=True, null=True)
-    op_vaild = models.IntegerField(blank=True, null=True)
-    project_no = models.CharField(max_length=256, blank=True, null=True)
-    external_code = models.CharField(max_length=256, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ws_fire_hydrant'
-
-
-class WsFlowMeter(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    name = models.CharField(max_length=128, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff = models.CharField(max_length=50, blank=True, null=True)
-    location_x = models.FloatField(blank=True, null=True)
-    location_y = models.FloatField(blank=True, null=True)
-    simid = models.CharField(max_length=20, blank=True, null=True)
-    memo = models.CharField(max_length=256, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ws_flow_meter'
-
-
-class WsForcePump(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    name = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff = models.CharField(max_length=50, blank=True, null=True)
-    location_x = models.FloatField(blank=True, null=True)
-    location_y = models.FloatField(blank=True, null=True)
-    memo = models.CharField(max_length=256, blank=True, null=True)
-    altitude = models.FloatField(blank=True, null=True)
-    depth = models.FloatField(blank=True, null=True)
-    caliber = models.FloatField(blank=True, null=True)
-    material = models.CharField(max_length=256, blank=True, null=True)
-    burying = models.CharField(max_length=256, blank=True, null=True)
-    angle = models.FloatField(blank=True, null=True)
-    area = models.CharField(max_length=256, blank=True, null=True)
-    road = models.CharField(max_length=256, blank=True, null=True)
-    unit = models.CharField(max_length=256, blank=True, null=True)
-    project_ref_count = models.IntegerField(blank=True, null=True)
-    op_vaild = models.IntegerField(blank=True, null=True)
-    project_no = models.CharField(max_length=256, blank=True, null=True)
-    external_code = models.CharField(max_length=256, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ws_force_pump'
-
-
-class WsMetabox(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    name = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    buildingno = models.CharField(max_length=128, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff = models.CharField(max_length=50, blank=True, null=True)
-    location_x = models.FloatField(blank=True, null=True)
-    location_y = models.FloatField(blank=True, null=True)
-    memo = models.CharField(max_length=256, blank=True, null=True)
-    concentrator_id = models.CharField(max_length=20, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ws_metabox'
-
-
-class WsPipe(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    name = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff = models.CharField(max_length=50, blank=True, null=True)
-    material = models.CharField(max_length=256, blank=True, null=True)
-    caliber = models.FloatField(blank=True, null=True)
-    length = models.FloatField(blank=True, null=True)
-    pipe_first = models.CharField(max_length=20, blank=True, null=True)
-    pipe_end = models.CharField(max_length=20, blank=True, null=True)
-    memo = models.CharField(max_length=256, blank=True, null=True)
-    buried = models.FloatField(blank=True, null=True)
-    start_depth = models.FloatField(blank=True, null=True)
-    end_depth = models.FloatField(blank=True, null=True)
-    burying = models.CharField(max_length=256, blank=True, null=True)
-    start_altitude = models.FloatField(blank=True, null=True)
-    end_altitude = models.FloatField(blank=True, null=True)
-    area = models.CharField(max_length=256, blank=True, null=True)
-    road = models.CharField(max_length=256, blank=True, null=True)
-    unit = models.CharField(max_length=256, blank=True, null=True)
-    project_ref_count = models.IntegerField(blank=True, null=True)
-    op_vaild = models.IntegerField(blank=True, null=True)
-    project_no = models.CharField(max_length=256, blank=True, null=True)
-    external_code = models.CharField(max_length=256, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ws_pipe'
-
-
-class WsPipeType(models.Model):
-    id = models.CharField(primary_key=True, max_length=5)
-    name = models.CharField(max_length=128, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ws_pipe_type'
-
-
-class WsProjectInfo(models.Model):
-    id = models.CharField(primary_key=True, max_length=32)
-    number = models.CharField(max_length=64)
-    project_name = models.CharField(max_length=255)
-    manager_unit = models.CharField(max_length=255, blank=True, null=True)
-    owner = models.CharField(max_length=255, blank=True, null=True)
-    area = models.CharField(max_length=255, blank=True, null=True)
-    completion_time = models.CharField(max_length=20, blank=True, null=True)
-    measurement_unit = models.CharField(max_length=64, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    input_staff_id = models.CharField(max_length=32, blank=True, null=True)
-    state = models.IntegerField(blank=True, null=True)
-    minx = models.FloatField(blank=True, null=True)
-    miny = models.FloatField(blank=True, null=True)
-    maxx = models.FloatField(blank=True, null=True)
-    maxy = models.FloatField(blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff_id = models.CharField(max_length=32, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'ws_project_info'
-        unique_together = (('id', 'number'),)
-
-
-class WsProjectMeasurementRecord(models.Model):
-    id = models.CharField(primary_key=True, max_length=32)
-    project_id = models.CharField(max_length=32)
-    equipement_id = models.CharField(max_length=20)
-    type = models.CharField(max_length=255)
-
-    class Meta:
-        managed = False
-        db_table = 'ws_project_measurement_record'
-
+    class Meta:
+        managed = False
+        db_table = 'hdb_sampling_2032'
+        unique_together = (('branchnodeid', 'date'),)
+
 
-class WsResource(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    tablename = models.CharField(max_length=128)
+class HdbSampling2033(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'ws_resource'
+        db_table = 'hdb_sampling_2033'
+        unique_together = (('branchnodeid', 'date'),)
 
 
-class WsSourceWater(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    name = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff = models.CharField(max_length=50, blank=True, null=True)
-    location_x = models.FloatField(blank=True, null=True)
-    location_y = models.FloatField(blank=True, null=True)
-    memo = models.CharField(max_length=256, blank=True, null=True)
-    altitude = models.FloatField(blank=True, null=True)
-    depth = models.FloatField(blank=True, null=True)
-    caliber = models.FloatField(blank=True, null=True)
-    material = models.CharField(max_length=256, blank=True, null=True)
-    burying = models.CharField(max_length=256, blank=True, null=True)
-    angle = models.FloatField(blank=True, null=True)
-    area = models.CharField(max_length=256, blank=True, null=True)
-    road = models.CharField(max_length=256, blank=True, null=True)
-    unit = models.CharField(max_length=256, blank=True, null=True)
-    project_ref_count = models.IntegerField(blank=True, null=True)
-    op_vaild = models.IntegerField(blank=True, null=True)
-    project_no = models.CharField(max_length=256, blank=True, null=True)
-    external_code = models.CharField(max_length=256, blank=True, null=True)
+class HdbSampling2034(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=20)
+    volume = models.FloatField(blank=True, null=True)
+    price = models.FloatField(blank=True, null=True)
+    fee = models.FloatField(blank=True, null=True)
+    data_flag = models.IntegerField(blank=True, null=True)
+    volume_type = models.IntegerField(blank=True, null=True)
+    bottom_value = models.FloatField(blank=True, null=True)
+    cumulative_value = models.FloatField(blank=True, null=True)
+    holiday = models.IntegerField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'ws_source_water'
+        db_table = 'hdb_sampling_2034'
+        unique_together = (('branchnodeid', 'date'),)
 
 
-class WsUserOpCascadeLog(models.Model):
-    id = models.IntegerField(primary_key=True)
-    op_mode = models.IntegerField(blank=True, null=True)
-    topo_old = models.CharField(max_length=62, blank=True, null=True)
-    topo_old_points = models.CharField(max_length=255, blank=True, null=True)
-    topo_new = models.CharField(max_length=62, blank=True, null=True)
-    topo_new_points = models.CharField(max_length=255, blank=True, null=True)
-    attr_id = models.CharField(max_length=20, blank=True, null=True)
-    attr_tablename = models.CharField(max_length=128, blank=True, null=True)
-    meta_id = models.IntegerField(blank=True, null=True)
-    meta_tablename = models.CharField(max_length=128, blank=True, null=True)
-    op_cascade_id = models.CharField(max_length=255, blank=True, null=True)
+class HdbWeek(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'ws_user_op_cascade_log'
+        db_table = 'hdb_week'
+        unique_together = (('branchnodeid', 'date'),)
 
 
-class WsValve(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    name = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff = models.CharField(max_length=50, blank=True, null=True)
-    location_x = models.FloatField(blank=True, null=True)
-    location_y = models.FloatField(blank=True, null=True)
-    memo = models.CharField(max_length=256, blank=True, null=True)
-    altitude = models.FloatField(blank=True, null=True)
-    depth = models.FloatField(blank=True, null=True)
-    caliber = models.FloatField(blank=True, null=True)
-    material = models.CharField(max_length=256, blank=True, null=True)
-    burying = models.CharField(max_length=256, blank=True, null=True)
-    angle = models.FloatField(blank=True, null=True)
-    area = models.CharField(max_length=256, blank=True, null=True)
-    road = models.CharField(max_length=256, blank=True, null=True)
-    unit = models.CharField(max_length=256, blank=True, null=True)
-    project_ref_count = models.IntegerField(blank=True, null=True)
-    op_vaild = models.IntegerField(blank=True, null=True)
-    project_no = models.CharField(max_length=256, blank=True, null=True)
-    external_code = models.CharField(max_length=256, blank=True, null=True)
+class HdbYear(models.Model):
+    buildingid = models.IntegerField(db_column='BuildingId', blank=True, null=True)  # Field name made lowercase.
+    branchnodeid = models.IntegerField(db_column='BranchNodeId', primary_key=True)  # Field name made lowercase.
+    date = models.CharField(max_length=10)
+    total = models.FloatField(blank=True, null=True)
+    peak = models.FloatField(blank=True, null=True)
+    flat = models.FloatField(blank=True, null=True)
+    valley = models.FloatField(blank=True, null=True)
+    total_fee = models.FloatField(blank=True, null=True)
+    peak_fee = models.FloatField(blank=True, null=True)
+    flat_fee = models.FloatField(blank=True, null=True)
+    valley_fee = models.FloatField(blank=True, null=True)
+    runtime = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'ws_valve'
+        db_table = 'hdb_year'
+        unique_together = (('branchnodeid', 'date'),)
 
 
-class WsValveWell(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    name = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff = models.CharField(max_length=50, blank=True, null=True)
-    location_x = models.FloatField(blank=True, null=True)
-    location_y = models.FloatField(blank=True, null=True)
-    memo = models.CharField(max_length=256, blank=True, null=True)
-    altitude = models.FloatField(blank=True, null=True)
-    depth = models.FloatField(blank=True, null=True)
-    caliber = models.FloatField(blank=True, null=True)
-    material = models.CharField(max_length=256, blank=True, null=True)
-    burying = models.CharField(max_length=256, blank=True, null=True)
-    angle = models.FloatField(blank=True, null=True)
-    area = models.CharField(max_length=256, blank=True, null=True)
-    road = models.CharField(max_length=256, blank=True, null=True)
-    unit = models.CharField(max_length=256, blank=True, null=True)
-    project_ref_count = models.IntegerField(blank=True, null=True)
-    op_vaild = models.IntegerField(blank=True, null=True)
-    project_no = models.CharField(max_length=256, blank=True, null=True)
-    external_code = models.CharField(max_length=256, blank=True, null=True)
+class Metermodel(models.Model):
+    id = models.IntegerField(db_column='Id', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(db_column='Name', max_length=128, blank=True, null=True)  # Field name made lowercase.
+    type = models.CharField(db_column='Type', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    manufacturer = models.CharField(db_column='Manufacturer', max_length=256, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
-        db_table = 'ws_valve_well'
+        db_table = 'metermodel'
 
 
-class WsVentValve(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    name = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff = models.CharField(max_length=50, blank=True, null=True)
-    location_x = models.FloatField(blank=True, null=True)
-    location_y = models.FloatField(blank=True, null=True)
-    memo = models.CharField(max_length=256, blank=True, null=True)
-    altitude = models.FloatField(blank=True, null=True)
-    depth = models.FloatField(blank=True, null=True)
-    caliber = models.FloatField(blank=True, null=True)
-    material = models.CharField(max_length=256, blank=True, null=True)
-    burying = models.CharField(max_length=256, blank=True, null=True)
-    angle = models.FloatField(blank=True, null=True)
-    area = models.CharField(max_length=256, blank=True, null=True)
-    road = models.CharField(max_length=256, blank=True, null=True)
-    unit = models.CharField(max_length=256, blank=True, null=True)
-    project_ref_count = models.IntegerField(blank=True, null=True)
-    op_vaild = models.IntegerField(blank=True, null=True)
-    project_no = models.CharField(max_length=256, blank=True, null=True)
-    external_code = models.CharField(max_length=256, blank=True, null=True)
+class Timeblock(models.Model):
+    id = models.IntegerField(db_column='Id', primary_key=True)  # Field name made lowercase.
+    type = models.CharField(db_column='Type', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    strhour = models.CharField(db_column='StrHour', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    endhour = models.CharField(db_column='EndHour', max_length=30, blank=True, null=True)  # Field name made lowercase.
+    price = models.CharField(db_column='Price', max_length=30, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
-        db_table = 'ws_vent_valve'
+        db_table = 'timeblock'
 
 
-class WsWaterMeter(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    name = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff = models.CharField(max_length=50, blank=True, null=True)
-    location_x = models.FloatField(blank=True, null=True)
-    location_y = models.FloatField(blank=True, null=True)
-    memo = models.CharField(max_length=256, blank=True, null=True)
+class Weather(models.Model):
+    date = models.CharField(primary_key=True, max_length=10)
+    humidity = models.FloatField(blank=True, null=True)
+    temperature = models.FloatField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'ws_water_meter'
+        db_table = 'weather'
 
 
-class WsWatermeterBasin(models.Model):
-    id = models.CharField(primary_key=True, max_length=20)
-    name = models.CharField(unique=True, max_length=128, blank=True, null=True)
-    input_time = models.CharField(max_length=20, blank=True, null=True)
-    input_staff = models.CharField(max_length=50, blank=True, null=True)
-    modify_time = models.CharField(max_length=20, blank=True, null=True)
-    modify_staff = models.CharField(max_length=50, blank=True, null=True)
-    location_x = models.FloatField(blank=True, null=True)
-    location_y = models.FloatField(blank=True, null=True)
-    memo = models.CharField(max_length=256, blank=True, null=True)
-    altitude = models.FloatField(blank=True, null=True)
-    depth = models.FloatField(blank=True, null=True)
-    caliber = models.FloatField(blank=True, null=True)
-    material = models.CharField(max_length=256, blank=True, null=True)
-    burying = models.CharField(max_length=256, blank=True, null=True)
-    angle = models.FloatField(blank=True, null=True)
-    area = models.CharField(max_length=256, blank=True, null=True)
-    road = models.CharField(max_length=256, blank=True, null=True)
-    unit = models.CharField(max_length=256, blank=True, null=True)
-    project_ref_count = models.IntegerField(blank=True, null=True)
-    op_vaild = models.IntegerField(blank=True, null=True)
-    project_no = models.CharField(max_length=256, blank=True, null=True)
-    external_code = models.CharField(max_length=256, blank=True, null=True)
+class WeatherHour(models.Model):
+    date = models.CharField(primary_key=True, max_length=20)
+    humidity = models.FloatField(blank=True, null=True)
+    temperature = models.FloatField(blank=True, null=True)
 
     class Meta:
         managed = False
-        db_table = 'ws_watermeter_basin'
+        db_table = 'weather_hour'

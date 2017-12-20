@@ -52,6 +52,7 @@
                 </tr>
               </thead>
               <tbody>
+              
               {% for key,summary in dma_content.items %}
                 <tr>
                   <th scope="row">{{  loop.index  }}</th>
@@ -62,6 +63,8 @@
                   <td>{{ summary.note }}</td>
                 </tr>
                {% endfor %}
+               
+               
                 
                 
               </tbody>

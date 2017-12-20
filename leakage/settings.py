@@ -94,9 +94,21 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '5432',
     },
+    'ems': {
+        'ENGINE': 'django.db.backends.mysql',#postgresql_psycopg2  or django.contrib.gis.db.backends.postgis or django.db.backends.postgresql_psycopg2
+        'NAME': 'gis',
+        'USER': 'scada',
+        'PASSWORD': 'scada',
+        'HOST': '120.25.223.180',
+        'PORT': '3306',
+    },
     'dma_db':{
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'dma_db.sqlite3'),
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'dma',
+        'USER': 'scada',
+        'PASSWORD': 'scada',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
