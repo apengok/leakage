@@ -6,7 +6,16 @@ import mptt_urls
 urlpatterns = [
     url(r'^$',views.index,name='index'),
     url(r'dma/',views.dma,name='dma'),
-    url(r'^contact/',views.contact,name='contact'),
+    url(r'^dma_manage/',views.dma_manage,name='dma_manage'),
+    url(r'^dma_service/',views.dma_service,name='dma_service'),
+    url(r'^dma_meter/',views.dma_meter,name='dma_meter'),
+    url(r'^press_manager/',views.press_manager,name='press_manager'),
+    url(r'^analy_config/',views.analy_config,name='analy_config'),
+    url(r'^service_manager/',views.service_manager,name='service_manager'),
+    url(r'^pipe_check/',views.pipe_check,name='pipe_check'),
+    url(r'^report/',views.report,name='report'),
+    url(r'^premium_apply/',views.premium_apply,name='premium_apply'),
+    
     url(r'^wbalance/',views.wbalance,name='wbalance'),
     url(r'^wbalance_mon/(\w+)/$',views.wbalance_mon,name='wbalance_mon'),
     url(r'^wstasitc/',views.wstasitc,name='wstasitc'),

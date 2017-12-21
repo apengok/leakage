@@ -13,6 +13,33 @@ import json
 def index(request):
     return render(request,'dma/home.html')
     
+def dma_manage(request):
+    return render(request,'dma/dma_manage.html')
+
+def dma_service(request):
+    return render(request,'dma/dma_service.html')
+
+def dma_meter(request):
+    return render(request,'dma/dma_meter.html')
+
+def press_manager(request):
+    return render(request,'dma/press_manager.html')
+
+def analy_config(request):
+    return render(request,'dma/analy_config.html')
+
+def service_manager(request):
+    return render(request,'dma/service_manager.html')
+
+def pipe_check(request):
+    return render(request,'dma/pipe_check.html')
+
+def report(request):
+    return render(request,'dma/report.html')
+
+def premium_apply(request):
+    return render(request,'dma/premium_apply.html')
+    
 def contact(request):
     return render(request, 'dma/home.html',{'content':['If you would like to contact me, please email me.','hskinsley@gmail.com']})
     
