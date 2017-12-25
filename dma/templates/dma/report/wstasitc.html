@@ -1,0 +1,52 @@
+{% extends 'dma/report.html' %}
+
+{% load bootstrap3 %}
+
+
+{% block title %}水量统计报表{% endblock %}
+
+{% block report_content %}
+
+<div class="col-md-9">
+            
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="tophead">
+                                    <h2>集团水量统计 {{ current_mon }}月报表</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                        <table class="table table-bordered">
+                          <thead>
+                            <tr>
+                              <th scope="col">序号</th>
+                              <th scope="col">项目</th>
+                              <th scope="col">上月止累计</th>
+                              <th scope="col">当月</th>
+                              <th scope="col">本月止累计</th>
+                              <th scope="col">说明</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          {% for key,summary in static_monthly.items %}
+                            <tr>
+                              <th scope="row">{{  forloop.counter  }}</th>
+                              <td>{{ summary.name }}</td>
+                              <td>{{ summary.last_month_total }}</td>
+                              <td>{{ summary.cur_month }}</td>
+                              <td>{{ summary.cur_month_total }}</td>
+                              <td>{{ summary.note }}</td>
+                            </tr>
+                            {% endfor %}
+                            
+                            
+                          </tbody>
+                        </table>
+                        
+                    </div>    
+                    
+                  
+                </div>
+
+{% endblock report_content%}

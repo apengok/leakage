@@ -31,7 +31,7 @@
                 <li><a href="{% url 'pipe_check' %}">管网捡漏</a></li>	
                 <li><a href="{% url 'report' %}">统计报表</a></li>
                 <li><a href="{% url 'premium_apply' %}">高级应用</a></li>
-                <li><a href="{% url 'dma' %}">分区管理</a></li>
+                
                 
                 <li><a href="/map/">地图</a></li>
               </ul>
@@ -41,7 +41,7 @@
 
         {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
 
-        {% block content %}(no content){% endblock %}
+        
     </div>
     
     {% if messages %}
@@ -51,5 +51,8 @@
         {% endfor %}
     </ul>
     {% endif %}
+    
+    {% block content %}(no content){% endblock %}
+    {% block extrhead %}{% endblock %}
 
 {% endblock %}

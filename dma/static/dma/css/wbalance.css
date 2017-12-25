@@ -52,3 +52,101 @@ table {
 .row-10 {height: 83.333333%;}
 .row-11 {height: 91.666666%;}
 .row-12 {height: 100%;}
+
+
+.sidebarContent {
+    margin-top: 50px;
+    margin-right: 1px;
+    margin-bottom: -5px;
+    margin-left: -10px;
+    height:600px;
+    width:150px;
+    background-color:silver;
+    text-align:center;
+    
+    display:table-cell;
+    vertical-align: middle;
+}
+
+.sidebarContent2 {
+    margin-top: 1px;
+    margin-right: -25px;
+    margin-bottom: 1px;
+    margin-left: -25px;
+    height:300px;
+    width:150px;
+    background-color:silver;
+    text-align:center;
+    
+    display:table-cell;
+    vertical-align: middle;
+}
+
+.sidebarContent3 {
+    margin-top: 1px;
+    margin-right: -30px;
+    margin-bottom: 1px;
+    margin-left: 1px;
+    height:150px;
+    background-color:silver;
+    text-align:center;
+    
+    display:table-cell;
+    vertical-align: middle;
+}
+
+.sidebarContent4 {
+    margin-top: 1px;
+    margin-right: 1px;
+    margin-bottom: 1px;
+    margin-left: 1px;
+    height:75px;
+    background-color:silver;
+    text-align:center;
+    
+    
+}
+
+.sidebarContent5 {
+    margin-top: 1px;
+    margin-right: 1px;
+    margin-bottom: 1px;
+    margin-left: 1px;
+    height:150px;
+    background-color:silver;
+    text-align:center;
+    
+    #display:table-cell;
+    vertical-align: middle;
+}
+
+.sidebarContent6 {
+    margin-top: 1px;
+    margin-right: 1px;
+    margin-bottom: 1px;
+    margin-left: 1px;
+    height:450px;
+    background-color:silver;
+    text-align:center;
+    
+    display:table-cell;
+    vertical-align: middle;
+}
+
+.content {
+    text-align:center;
+}
+
+.tophead {
+    margin-top: 1px;
+    margin-right: 1px;
+    margin-bottom: 1px;
+    margin-left: 1px;
+    height:20px;
+    width:1200px;
+    #background-color:silver;
+    text-align:center;
+    
+    display:table-cell;
+    horizon-align: middle;
+}

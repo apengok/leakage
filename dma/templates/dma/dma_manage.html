@@ -12,6 +12,63 @@
             <div class="row">
                 {% include "dma/includes/left/dma_manage.html"  %}
                 
+                {% block manage_content %}
+                
+                <div class="col-xs-7">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="tophead">
+                                    <h2>分区资料</h2>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                        <table class="table table-bordered">
+                          <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">资料</th>
+                              <th scope="col">数据</th>
+                              <th scope="col">备注</th>
+                              
+                            </tr>
+                          </thead>
+                          <tbody>
+                          
+                          {% for key,summary in dma_content.items %}
+                            <tr>
+                              <th scope="row">{{  forloop.counter  }}</th>
+                              <td>{{ summary.name }}</td>
+                              
+                              <td>{{ summary.value }}</td>
+                              
+                              <td>{{ summary.note }}</td>
+                            </tr>
+                           {% endfor %}
+                           
+                           
+                            
+                            
+                          </tbody>
+                        </table>
+                        
+                    </div>    
+                    
+                    
+                        
+                    </div>
+                    
+                    <aside class="col-sm-2 ml-sm-auto blog-sidebar">
+          
+           
+                       <div id="treeview3" class="">
+                        {% include 'dma/includes/dmatree.html' %}
+                       </div>
+                       
+                    </aside>
+                
+                {% endblock %}
+                
             </div>
         </div>
     </section>

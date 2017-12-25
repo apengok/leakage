@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.conf.urls import url
 from . import views
 
@@ -5,7 +7,7 @@ import mptt_urls
 
 urlpatterns = [
     url(r'^$',views.index,name='index'),
-    url(r'dma/',views.dma,name='dma'),
+    
     url(r'^dma_manage/',views.dma_manage,name='dma_manage'),
     url(r'^dma_service/',views.dma_service,name='dma_service'),
     url(r'^dma_meter/',views.dma_meter,name='dma_meter'),
@@ -23,7 +25,7 @@ urlpatterns = [
     url(r'^conv/',views.show_genres,name='show_genres'),
     url(r'^dma_summary/',views.dma_summary,name='dma_summary'),
     
-    url(r'^dma/(?P<path>.*)', mptt_urls.view(model='dma.models.ZoneTree', view='dma.views.sub_dma', slug_field='slug'), {'extra': 'You may also pass extra options as usual!'}, name='sub_dma'),
+    url(r'^dma/(?P<path>.*)', mptt_urls.view(model='dma.models.ZoneTree', view='dma.views.sub_dma', slug_field='slug'),  name='sub_dma'),
     
     
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 from django.contrib.gis.db import models
 from django.utils.functional import lazy
 from django.core.urlresolvers import reverse
+from django.urls import reverse
 from mptt.models import MPTTModel, TreeForeignKey
 
 # Create your models here.

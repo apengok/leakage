@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 
 from models import Wbalance,ZoneTree,DmaZone,Community,FlowShareDayTax,PressShareDayTax,Tblfminfo,Watermeter,HdbTianhouBig
-from dma import dma_tree,dma_file,summary_file,static_monthly
+from dmadata import dma_tree,dma_file,summary_file,static_monthly
 
 import json
 # Create your views here.
@@ -14,7 +14,19 @@ def index(request):
     return render(request,'dma/home.html')
     
 def dma_manage(request):
-    return render(request,'dma/dma_manage.html')
+    dmz = DmaZone.objects.filter(zone_name='shenzhen').values()
+    #dmz = get_object_or_404(DmaZone,zone=instance)
+    #fields = DmaZone._meta.get_fields()
+    try:
+        for k,v in dmz[0].items():
+            if k in dma_file.keys():
+                dma_file[k]['value'] = v
+    except:
+        pass
+    
+    #dma_file['zone_name']['value'] = dma_tree[0]['text'].decode('utf-8')
+    
+    return render(request,'dma/dma_manage.html',{'dma_content':dma_file,'nodes':ZoneTree.objects.all()})
 
 def dma_service(request):
     return render(request,'dma/dma_service.html')
@@ -55,7 +67,7 @@ def wbalance(request):
     
     
     
-    return render(request,'dma/wbalance.html',context)
+    return render(request,'dma/report/wbalance.html',context)
 
     
 def wbalance_mon(request,mon):
@@ -63,7 +75,7 @@ def wbalance_mon(request,mon):
     month_group = [ba.name for ba in balance ]
     balance1 = Wbalance.objects.using('default').get(name=mon)
     
-    return render(request,'dma/wbalance.html',{'balance':balance1,'month_group':month_group,'current_mon':mon})
+    return render(request,'dma/report/wbalance.html',{'balance':balance1,'month_group':month_group,'current_mon':mon})
 
     
 def wstasitc(request):
@@ -71,11 +83,11 @@ def wstasitc(request):
     month_group = [ba.name for ba in balance ]
     
     
-    return render(request,'dma/wstasitc.html',{'balance':balance[0],'month_group':month_group,'current_mon':month_group[0],'static_monthly':static_monthly})
+    return render(request,'dma/report/wstasitc.html',{'balance':balance[0],'month_group':month_group,'current_mon':month_group[0],'static_monthly':static_monthly})
     
 def economize(request):
 
-    return render(request,'dma/economize.html')
+    return render(request,'dma/report/economize.html')
     
 def show_genres(request):
     tmp = Community.objects.using('ems').all().values()
@@ -84,6 +96,7 @@ def show_genres(request):
     #                      {'nodes':ZoneTree.objects.all()})
     
 def dma(request):
+    messages.info(request,'dma')
     dmz = DmaZone.objects.filter(zone_name='shenzhen').values()
     #dmz = get_object_or_404(DmaZone,zone=instance)
     #fields = DmaZone._meta.get_fields()
@@ -94,12 +107,12 @@ def dma(request):
     except:
         pass
     
-    #dma_file['zone_name']['value'] = dma_tree[0]['text'].decode('utf-8')
+    
     return render(request,'dma/dma.html',{'dma_content':dma_file,'nodes':ZoneTree.objects.all()})
     
-def sub_dma(request,path,instance, extra):
+def sub_dma(request,path,instance):
     
-    #messages.info(request,path)
+    #messages.info(request,'dma_sub')
     
     dmz = DmaZone.objects.filter(zone=instance).values()
     #dmz = get_object_or_404(DmaZone,zone=instance)
@@ -112,8 +125,8 @@ def sub_dma(request,path,instance, extra):
         dma_file['zone_name']['value'] = instance.name
         
     
-    #dma_file['zone_name']['value'] = instance.name if instance else 'fuck'
-    return render(request,'dma/dma.html',{
+    
+    return render(request,'dma/dma_manage.html',{
     'nodes':ZoneTree.objects.all(),
     'dma_content':dma_file})
 
