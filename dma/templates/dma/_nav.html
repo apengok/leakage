@@ -1,0 +1,29 @@
+<nav class="navbar navbar-default ">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="url 'wbalance'">Homepage</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+              <ul class="nav navbar-nav">
+                <li><a href="{% url 'dma_manage' %}">分区管理</a></li>	
+                <li><a href="{% url 'dma_service' %}">分区营运</a></li>
+                <li><a href="{% url 'dma_meter' %}">分区计量</a></li>
+                <li><a href="{% url 'press_manager' %}">压力管理</a></li>
+                <li><a href="{% url 'analy_config' %}">分析配置</a></li>
+                <li><a href="{% url 'service_manager' %}">营收管理</a></li>
+                <li><a href="{% url 'pipe_check' %}">管网捡漏</a></li>	
+                <li><a href="{% url 'report' %}">统计报表</a></li>
+                <li><a href="{% url 'premium_apply' %}">高级应用</a></li>
+                
+                
+                <li><a href="/map/">地图</a></li>
+              </ul>
+            </div><!--/.nav-collapse -->
+          </div>
+        </nav>

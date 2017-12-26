@@ -1,14 +1,19 @@
 
-    <div class="col-md-3">
-        
-        <div class="list-group">
-          <a href="index.html" class="list-group-item active main-color-bg">
-            报表统计
+<div class="col-md-3">
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">    
+        <div class="list-group" role="tab" id="heading2">
+            <div>
+          <a data-toggle="collapse" data-parent="#accordion" href="#collapse2" aria-expanded="true" aria-controls="collapse2" class="list-group-item active main-color-bg">
+            报表统计<i class="pull-right fa fa-caret-down"></i>
           </a>
-          <a href="{% url 'wbalance' %}" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"> 水平衡表</span></a>
-          <a href="{% url 'wstasitc' %}" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"> 水量统计报表</span></a>
-          <a href="{% url 'economize' %}" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"> 节能水平评价表</span></a>
-          
+          </div>
+          <div id="collapse2" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading2">
+              <div>
+                  <a href="{% url 'wbalance' %}" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"> 水平衡表</span></a>
+                  <a href="{% url 'wstasitc' %}" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"> 水量统计报表</span></a>
+                  <a href="{% url 'economize' %}" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"> 节能水平评价表</span></a>
+              </div>
+          </div>
         </div>
         
         <div class="list-group">
@@ -54,3 +59,4 @@
         </div>
         
     </div>
+</div>
