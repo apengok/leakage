@@ -1,19 +1,11 @@
 
-{% extends 'dma/base.html' %}
-{% load bootstrap3 %}
+{% extends 'dma/_base.html' %}
 
 
 {% block title %}分区管理模块{% endblock %}
 
 {% block content %}
-    
-    <section id="main">
-        <div class="container">
-            <div class="row">
-                {% include "dma/includes/left/dma_manage.html"  %}
-                
-                {% block manage_content %}
-                
+
                 <div class="col-xs-7">
                         <div class="row">
                             <div class="col-xs-12">
@@ -67,15 +59,6 @@
                        
                     </aside>
                 
-                {% endblock %}
                 
-            </div>
-        </div>
-    </section>
-    
-    {% if content %}
-        {% for c in content %}
-            <p>{{ c }}</p>
-        {% endfor %}
-    {% endif %}
+            
 {% endblock %}

@@ -1,24 +1,10 @@
 <!-- 分区计量模块 -->
-{% extends 'dma/base.html' %}
-{% load bootstrap3 %}
+{% extends 'dma/_base.html' %}
 
 
 {% block title %}分区计量模块{% endblock %}
 
 {% block content %}
+    <h1 class="page-header">分区计量模块</h1>
     
-    <section id="main">
-        <div class="container">
-            <div class="row">
-                {% include "dma/includes/left/dma_meter.html"  %}
-                
-            </div>
-        </div>
-    </section>
-    
-    {% if content %}
-        {% for c in content %}
-            <p>{{ c }}</p>
-        {% endfor %}
-    {% endif %}
 {% endblock %}

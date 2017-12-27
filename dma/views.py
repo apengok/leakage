@@ -7,7 +7,7 @@ from django.contrib import messages
 
 from models import Wbalance,ZoneTree,DmaZone,Community,FlowShareDayTax,PressShareDayTax,Tblfminfo,Watermeter,HdbTianhouBig
 from dmadata import dma_tree,dma_file,summary_file,static_monthly
-
+from .sidecontent import side_report,side_analy_config,side_dma_manage,side_dma_meter,side_dma_service,side_pipe_check,side_premium_apply,side_press_manage,side_service_manager
 import json
 # Create your views here.
 def index(request):
@@ -26,31 +26,41 @@ def dma_manage(request):
     
     #dma_file['zone_name']['value'] = dma_tree[0]['text'].decode('utf-8')
     
-    return render(request,'dma/dma_manage.html',{'dma_content':dma_file,'nodes':ZoneTree.objects.all()})
+    return render(request,'dma/dma_manage.html',{'dma_content':dma_file,'nodes':ZoneTree.objects.all(),
+    'side_content':side_dma_manage})
 
 def dma_service(request):
-    return render(request,'dma/dma_service.html')
+    return render(request,'dma/dma_service.html',
+    {'side_content':side_dma_service})
 
 def dma_meter(request):
-    return render(request,'dma/dma_meter.html')
+    return render(request,'dma/dma_meter.html',
+    {'side_content':side_dma_meter})
 
 def press_manager(request):
-    return render(request,'dma/press_manager.html')
+    return render(request,'dma/press_manager.html',
+    {'side_content':side_press_manage})
 
 def analy_config(request):
-    return render(request,'dma/analy_config.html')
+    return render(request,'dma/analy_config.html',
+    {'side_content':side_analy_config})
 
 def service_manager(request):
-    return render(request,'dma/service_manager.html')
+    return render(request,'dma/service_manager.html',
+    {'side_content':side_service_manager})
 
 def pipe_check(request):
-    return render(request,'dma/pipe_check.html')
+    return render(request,'dma/pipe_check.html',
+    {'side_content':side_pipe_check})
 
 def report(request):
-    return render(request,'dma/report.html')
+    
+    return render(request,'dma/report.html',
+    {'side_content':side_report})
 
 def premium_apply(request):
-    return render(request,'dma/premium_apply.html')
+    return render(request,'dma/premium_apply.html',
+    {'side_content':side_premium_apply})
     
 def contact(request):
     return render(request, 'dma/home.html',{'content':['If you would like to contact me, please email me.','hskinsley@gmail.com']})
@@ -62,7 +72,8 @@ def wbalance(request):
     context = {
         'current_mon':month_group[0],
         'month_group':month_group,
-        'balance':balance_all[0]
+        'balance':balance_all[0],
+        'side_content':side_report
     }
     
     
@@ -83,7 +94,7 @@ def wstasitc(request):
     month_group = [ba.name for ba in balance ]
     
     
-    return render(request,'dma/report/wstasitc.html',{'balance':balance[0],'month_group':month_group,'current_mon':month_group[0],'static_monthly':static_monthly})
+    return render(request,'dma/report/wstasitc.html',{'balance':balance[0],'month_group':month_group,'current_mon':month_group[0],'static_monthly':static_monthly,'side_content':side_report})
     
 def economize(request):
 

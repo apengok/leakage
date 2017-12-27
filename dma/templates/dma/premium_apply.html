@@ -1,24 +1,11 @@
 
-{% extends 'dma/base.html' %}
-{% load bootstrap3 %}
+{% extends 'dma/_base.html' %}
 
 
 {% block title %}高级应用模块{% endblock %}
 
 {% block content %}
+    <h1 class="page-header">高级应用模块</h1>
     
-    <section id="main">
-        <div class="container">
-            <div class="row">
-                {% include "dma/includes/left/premium_apply.html"  %}
-                
-            </div>
-        </div>
-    </section>
-    
-    {% if content %}
-        {% for c in content %}
-            <p>{{ c }}</p>
-        {% endfor %}
-    {% endif %}
-{% endblock %}
+{% endblock %}    
+
