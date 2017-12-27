@@ -2,13 +2,14 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import get_object_or_404,render
-from django.http import HttpResponse
+from django.http import HttpResponse,JsonResponse
 from django.contrib import messages
 
 from models import Wbalance,ZoneTree,DmaZone,Community,FlowShareDayTax,PressShareDayTax,Tblfminfo,Watermeter,HdbTianhouBig
 from dmadata import dma_tree,dma_file,summary_file,static_monthly
 from .sidecontent import side_report,side_analy_config,side_dma_manage,side_dma_meter,side_dma_service,side_pipe_check,side_premium_apply,side_press_manage,side_service_manager
 import json
+import random
 # Create your views here.
 def index(request):
     return render(request,'dma/home.html')
@@ -61,6 +62,11 @@ def report(request):
 def premium_apply(request):
     return render(request,'dma/premium_apply.html',
     {'side_content':side_premium_apply})
+    
+def press_value(request):
+    
+    results = [random.randint(1,10),]
+    return JsonResponse({'latest_results_list':results})
     
 def contact(request):
     return render(request, 'dma/home.html',{'content':['If you would like to contact me, please email me.','hskinsley@gmail.com']})

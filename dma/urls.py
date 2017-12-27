@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^pipe_check/',views.pipe_check,name='pipe_check'),
     url(r'^report/',views.report,name='report'),
     url(r'^premium_apply/',views.premium_apply,name='premium_apply'),
-    
+    url(r'^press_value/',views.press_value,name='press_value'),
     url(r'^wbalance/',views.wbalance,name='wbalance'),
     url(r'^wbalance_mon/(\w+)/$',views.wbalance_mon,name='wbalance_mon'),
     url(r'^wstasitc/',views.wstasitc,name='wstasitc'),

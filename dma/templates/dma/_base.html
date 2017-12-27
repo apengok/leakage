@@ -34,14 +34,14 @@
                         <div class="list-group" role="tab" id="heading2">
                             <div>
                               <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter0 }}" class="list-group-item active main-color-bg">
-                                {{ side.header }}<span class="fa fa-caret-down" title="Toggle dropdown menu"></span>
+                                <span class="fa fa-caret-down" title="Toggle dropdown menu"></span> {{ side.header }} 
                               </a>
                             </div>
                             {% if side.listi %}
                                 <div id="collapse{{ forloop.counter0 }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ forloop.counter0 }}">
                                   <div>
                                     {% for sl in side.listi %}
-                                      <a href="{% url sl.href %}" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"> {{ sl.name }}</span></a>
+                                      <a href="{% url sl.href %}" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"> </span> {{ sl.name }}</a>
                                     {% endfor %}  
                                   </div>
                               </div>
