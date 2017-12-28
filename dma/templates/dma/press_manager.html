@@ -6,22 +6,26 @@
 
 {% block javascript %}
   <script>
+  var id=1;
   $( document ).ready(function() {
        setInterval(function(){
-            $.getJSON("{% url 'press_value' %}",
-                    function (data) {
-                        var json = data['latest_results_list'];
-                        var tr;
-                         $('#myTable tbody').html("");
-                        for (var i = 0; i < json.length; i++) {
-                            tr = $('<tr/>');
-                            tr.append("<td>" + json[i] + "</td>");
-                            
-                             $('#myTable tbody').append(tr);
-
-                        }
-                    });
-       },5000);
+       
+       $.ajax({
+        url: '/dma/press_value',
+        data: {'pid': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        type: 'POST',
+        success: function(res){
+            var json = res['press'];
+            var tr;
+            $('#myTable span').html("");
+            
+            
+            $('#myTable span').html(json);
+            //this_.dimTexts = geojsonObject.dimTexts;
+        }
+    });
+    id+=1;
+       },3000);
     });
 
   </script>
@@ -31,22 +35,8 @@
     <h1 class="page-header">压力管理模块</h1>
     
     <div id="right">
-        <table id ='myTable'>
-            <thead>
-            <tr>
-              <th>Date</th>
-              
-            </tr>
-            </thead>
-            <tbody >
-                 {% for b in latest_results_list %}
-                     <tr>
-                     <td>{{ b }}</td>
-                     
-                     </tr>                 
-                 {% endfor %}
-            </tbody >        
-        </table>
+        <h2 id="myTable">压力值:<span></span></h2>
+        
     </div>
     
 {% endblock %}    

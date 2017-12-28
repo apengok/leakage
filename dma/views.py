@@ -64,9 +64,17 @@ def premium_apply(request):
     {'side_content':side_premium_apply})
     
 def press_value(request):
+    if request.method == 'GET':
+        id = request.GET.get('pid')
+            
+    if request.method == 'POST':
+        id = request.POST.get('pid')
+        
     
-    results = [random.randint(1,10),]
-    return JsonResponse({'latest_results_list':results})
+    pp=PressShareDayTax.objects.filter(pid=id)[0]
+    print 'asdfasdfasdf',pp.pressure
+    #results = [random.randint(1,10),]
+    return JsonResponse({'press':pp.pressure})
     
 def contact(request):
     return render(request, 'dma/home.html',{'content':['If you would like to contact me, please email me.','hskinsley@gmail.com']})
@@ -104,7 +112,7 @@ def wstasitc(request):
     
 def economize(request):
 
-    return render(request,'dma/report/economize.html')
+    return render(request,'dma/report/economize.html',{'side_content':side_report})
     
 def show_genres(request):
     tmp = Community.objects.using('ems').all().values()
@@ -125,7 +133,7 @@ def dma(request):
         pass
     
     
-    return render(request,'dma/dma.html',{'dma_content':dma_file,'nodes':ZoneTree.objects.all()})
+    return render(request,'dma/dma.html',{'dma_content':dma_file,'nodes':ZoneTree.objects.all(),'side_content':side_dma_manage})
     
 def sub_dma(request,path,instance):
     
@@ -145,7 +153,8 @@ def sub_dma(request,path,instance):
     
     return render(request,'dma/dma_manage.html',{
     'nodes':ZoneTree.objects.all(),
-    'dma_content':dma_file})
+    'dma_content':dma_file,
+    'side_content':side_dma_manage})
 
 def dma_summary(request):
        

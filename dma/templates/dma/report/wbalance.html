@@ -1,17 +1,10 @@
-{% extends 'dma/report.html' %}
-
-{% load bootstrap3 %}
-
-{% block extrhead %}
-{% load staticfiles %}
-<link rel="stylesheet" href="{% static 'dma/css/wbalance.css' %}" type = "text/css"/>
-{% endblock %}
+{% extends 'dma/_base.html' %}
 
 {% block title %}水平衡分析表{% endblock %}
 
 
 
-{% block report_content %}
+{% block content %}
     <div class="col-xs-9">
         <div class="tophead">
             <h2>{{ current_mon }}以下期间以m3计之水平衡 30 日</h2>
@@ -159,4 +152,4 @@
           
         </aside><!-- /.blog-sidebar -->
             
-{% endblock report_content%}
+{% endblock content%}
