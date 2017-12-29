@@ -16,16 +16,21 @@
         type: 'POST',
         success: function(res){
             var json = res['press'];
-            var tr;
-            $('#myTable span').html("");
             
             
-            $('#myTable span').html(json);
+            
+            $('#myTable1 span').html(json['lsl']);
+            $('#myTable2 span').html(json['cxc']);
+            $('#myTable3 span').html(json['dgc']);
+            $('#myTable4 span').html(json['jll']);
+            $('#myTable5 span').html(json['bll']);
+            $('#myTable6 span').html(json['nyl']);
+            $('#myTable7 span').html(json['dts']);
             //this_.dimTexts = geojsonObject.dimTexts;
         }
     });
     id+=1;
-       },3000);
+       },1000);
     });
 
   </script>
@@ -34,9 +39,17 @@
 {% block content %}
     <h1 class="page-header">压力管理模块</h1>
     
-    <div id="right">
-        <h2 id="myTable">压力值:<span></span></h2>
+    
+    <div class="list-group">
+        <a href="#" class="list-group-item active">统计分析</a>
+        <a id="myTable1" href="#" class="list-group-item">漏失率（%） <span class="badge">4</span></a>
+        <a id="myTable2" href="#" class="list-group-item">产销差率（%） <span class="badge">4</span></a>
+        <a id="myTable3" href="#" class="list-group-item">单位管长漏失量（m³/km/h） <span class="badge">4</span></a>
+        <a id="myTable4" href="#" class="list-group-item">基础设施漏失指数（ILI） <span class="badge">4</span></a>
+        <a id="myTable5" href="#" class="list-group-item">不可避免物理损失水量(L/d) <span class="badge">4</span></a>
+        <a id="myTable6" href="#" class="list-group-item">年平均出厂压力 <span class="badge">4</span></a>
+        <a id="myTable7" href="#" class="list-group-item">最大冻土深度 <span class="badge">4</span></a>
         
-    </div>
+      </div>
     
 {% endblock %}    

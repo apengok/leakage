@@ -72,9 +72,15 @@ def press_value(request):
         
     
     pp=PressShareDayTax.objects.filter(pid=id)[0]
-    print 'asdfasdfasdf',pp.pressure
+    sv_list={'lsl':random.randint(1,10),
+        'cxc':random.randint(1,10),
+        'dgc':random.randint(1,10),
+        'jll':random.randint(1,10),
+        'bll':random.randint(1,10),
+        'nyl':pp.pressure,
+        'dts':random.randint(1,10),}
     #results = [random.randint(1,10),]
-    return JsonResponse({'press':pp.pressure})
+    return JsonResponse({'press':sv_list})
     
 def contact(request):
     return render(request, 'dma/home.html',{'content':['If you would like to contact me, please email me.','hskinsley@gmail.com']})

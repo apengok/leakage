@@ -1,15 +1,21 @@
 {% load mptt_tags %}
-<ul>
-    {% recursetree nodes %}
-        <li>
-            <a href="{{node.get_absolute_url }}">{{ node.name }}</a>
-            {% if not node.is_leaf_node %}
-                <ul class="children">
-                    <a href="{{node.get_absolute_url }}">{{ children }}</a> 
-                </ul>
-            {% endif %}
-        </li>
-    {% endrecursetree %}
+
+
+<a class="list-group-item active main-color-bg">
+    <span class="fa fa-caret-down" title="Toggle dropdown menu"></span> 分区管理 
+</a>
+                              
+<ul id="tree">
+{% recursetree nodes %}
+    <li>
+        <a href="{{node.get_absolute_url }}">{{ node.name }}</a>
+        {% if not node.is_leaf_node %}
+            <ul class="children">
+                <a href="{{node.get_absolute_url }}">{{ children }}</a> 
+            </ul>
+        {% endif %}
+    </li>
+{% endrecursetree %}
     
     
 </ul>

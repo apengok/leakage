@@ -9,8 +9,11 @@
     <link rel="stylesheet" type="text/css" href="{% static 'dma/css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'dma/css/font-awesome.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'dma/css/dashboard.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'dma/css/treeview.css' %}">
+    
     <script src="{% static 'dma/js/jquery-2.2.4.min.js' %}"></script>
     <script src="{% static 'dma/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'dma/js/treeview.js' %}"></script>
     {% block stylesheet %}{% endblock %}
   </head>
   <body>
@@ -26,12 +29,12 @@
     {% endif %}
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-3 col-md-2 sidebar">
+            <div class="col-md-2 sidebar">
                 {% block sidebar %}
                     {% if side_content %}
                     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
                         {% for side in side_content %}
-                        <div class="list-group" role="tab" id="heading2">
+                        <div class="list-group" role="tab" id="heading{{ forloop.counter0 }}">
                             <div>
                               <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter0 }}" aria-expanded="true" aria-controls="collapse{{ forloop.counter0 }}" class="list-group-item active main-color-bg">
                                 <span class="fa fa-caret-down" title="Toggle dropdown menu"></span> {{ side.header }} 
@@ -53,13 +56,20 @@
                 {% endblock %}
             </div>
             
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-              
+            <div class=" col-md-10 col-md-offset-2 main">
+                <div class="col-md-8">
                 {% block content %}
-                
+                    
                 {% endblock %}
-              
+                </div>
+                <div class="col-md-4">
+                    {% block rightside %}
+                    {% endblock %}
+                </div>
+             
             </div>
+            
+            
         
         </div> <!-- row -->
     </div>

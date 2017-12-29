@@ -4,61 +4,96 @@
 
 {% block title %}分区管理模块{% endblock %}
 
-{% block content %}
+{% block sidebar %}
 
-                <div class="col-xs-7">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="tophead">
-                                    <h2>分区资料</h2>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                        <table class="table table-bordered">
-                          <thead>
-                            <tr>
-                              <th scope="col">#</th>
-                              <th scope="col">资料</th>
-                              <th scope="col">数据</th>
-                              <th scope="col">备注</th>
-                              
-                            </tr>
-                          </thead>
-                          <tbody>
-                          
-                          {% for key,summary in dma_content.items %}
-                            <tr>
-                              <th scope="row">{{  forloop.counter  }}</th>
-                              <td>{{ summary.name }}</td>
-                              
-                              <td>{{ summary.value }}</td>
-                              
-                              <td>{{ summary.note }}</td>
-                            </tr>
-                           {% endfor %}
-                           
-                           
-                            
-                            
-                          </tbody>
-                        </table>
-                        
-                    </div>    
-                    
-                    
-                        
-                    </div>
-                    
-                    <aside class="col-sm-2 ml-sm-auto blog-sidebar">
-          
-           
-                       <div id="treeview3" class="">
-                        {% include 'dma/includes/dmatree.html' %}
-                       </div>
-                       
-                    </aside>
-                
-                
+{% include 'dma/includes/dmatree.html' %}
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+        <h1 class="page-header">分区管理</h1>
+        <h2 class="sub-header">分区资料</h2>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>资料</th>
+                  <th>数据</th>
+                  <th>备注</th>
+                  
+                </tr>
+              </thead>
+              <tbody>
+                {% for key,summary in dma_content.items %}
+                <tr>
+                  <th scope="row">{{  forloop.counter  }}</th>
+                  <td>{{ summary.name }}</td>
+                  
+                  <td>{{ summary.value }}</td>
+                  
+                  <td>{{ summary.note }}</td>
+                </tr>
+               {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+{% endblock %}
+
+{% block javascript %}
+  <script>
+  
+
+//Initialization of treeviews
+
+
+
+
+  var id=1;
+  $( document ).ready(function() {
+       setInterval(function(){
+       
+       $.ajax({
+        url: '/dma/press_value',
+        data: {'pid': id, 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        type: 'POST',
+        success: function(res){
+            var json = res['press'];
             
+            
+            
+            $('#myTable1 span').html(json['lsl']);
+            $('#myTable2 span').html(json['cxc']);
+            $('#myTable3 span').html(json['dgc']);
+            $('#myTable4 span').html(json['jll']);
+            $('#myTable5 span').html(json['bll']);
+            $('#myTable6 span').html(json['nyl']);
+            $('#myTable7 span').html(json['dts']);
+            //this_.dimTexts = geojsonObject.dimTexts;
+        }
+    });
+    id+=1;
+       },1000);
+    });
+
+  </script>
+{% endblock %}
+
+
+{% block rightside %}
+
+
+     <div class="list-group">
+        <a href="#" class="list-group-item active">统计分析</a>
+        <a id="myTable1" href="#" class="list-group-item">漏失率（%） <span class="badge">0</span></a>
+        <a id="myTable2" href="#" class="list-group-item">产销差率（%） <span class="badge">0</span></a>
+        <a id="myTable3" href="#" class="list-group-item">单位管长漏失量（m³/km/h） <span class="badge">0</span></a>
+        <a id="myTable4" href="#" class="list-group-item">基础设施漏失指数（ILI） <span class="badge">0</span></a>
+        <a id="myTable5" href="#" class="list-group-item">不可避免物理损失水量(L/d) <span class="badge">0</span></a>
+        <a id="myTable6" href="#" class="list-group-item">年平均出厂压力 <span class="badge">0</span></a>
+        <a id="myTable7" href="#" class="list-group-item">最大冻土深度 <span class="badge">0</span></a>
+        
+      </div>
+      
 {% endblock %}
