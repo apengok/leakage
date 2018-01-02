@@ -2,18 +2,41 @@
 from __future__ import unicode_literals
 
 from django.shortcuts import get_object_or_404,render
-from django.http import HttpResponse,JsonResponse
+from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from django.contrib import messages
 
+from django.views.generic import ListView
 from models import Wbalance,ZoneTree,DmaZone,Community,FlowShareDayTax,PressShareDayTax,Tblfminfo,Watermeter,HdbTianhouBig
 from dmadata import dma_tree,dma_file,summary_file,static_monthly
 from .sidecontent import side_report,side_analy_config,side_dma_manage,side_dma_meter,side_dma_service,side_pipe_check,side_premium_apply,side_press_manage,side_service_manager
 import json
 import random
+from datetime import datetime
+from .forms import FilterForm
+
+
 # Create your views here.
-def index(request):
-    return render(request,'dma/home.html')
-    
+
+class TblfminfoList(ListView):
+    model = Tblfminfo
+
+
+def home(request):
+    messages.info(request,'home')
+    if request.method == 'POST':
+        form = FilterForm(request.POST)
+        if form.is_valid():
+            simid = form.cleaned_data['simid']
+            started=form.cleaned_data['start_date']
+            ended=form.cleaned_data['end_date']
+            object_list=FlowShareDayTax.objects.filter(readtime__range=['2015-09-20','2015-0921']).filter(simid=simid)
+            #return HttpResponseRedirect('/dma/tblfminfo')
+    else:
+        form = FilterForm()
+        object_list=[]
+    return render(request,'dma/home.html',{'form':form,'object_list':object_list})
+
+#分区管理
 def dma_manage(request):
     dmz = DmaZone.objects.filter(zone_name='shenzhen').values()
     #dmz = get_object_or_404(DmaZone,zone=instance)
@@ -27,8 +50,16 @@ def dma_manage(request):
     
     #dma_file['zone_name']['value'] = dma_tree[0]['text'].decode('utf-8')
     
-    return render(request,'dma/dma_manage.html',{'dma_content':dma_file,'nodes':ZoneTree.objects.all(),
-    'side_content':side_dma_manage})
+    return render(request,'dma/dma_manage.html',{
+        'dma_content':dma_file,
+        'nodes':ZoneTree.objects.all(),
+        'side_content':side_dma_manage})
+        
+def cut_base(request):
+    return render(request,'dma/dma_manage/cut_base.html',{
+        'dma_content':dma_file,
+        'nodes':ZoneTree.objects.all(),
+        'side_content':side_dma_manage})
 
 def dma_service(request):
     return render(request,'dma/dma_service.html',

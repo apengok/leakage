@@ -168,6 +168,9 @@ class Tblfminfo(models.Model):
     class Meta:
         managed = True
         db_table = 'tblfminfo'
+        
+    def __unicode__(self):
+        return self.username
 
 
 class Watermeter(models.Model):

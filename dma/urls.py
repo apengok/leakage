@@ -5,8 +5,9 @@ from . import views
 
 import mptt_urls
 
+
 urlpatterns = [
-    url(r'^$',views.index,name='index'),
+    url(r'^$',views.home,name='home'),
     
     url(r'^dma_manage/',views.dma_manage,name='dma_manage'),
     url(r'^dma_service/',views.dma_service,name='dma_service'),
@@ -21,11 +22,13 @@ urlpatterns = [
     url(r'^wbalance/',views.wbalance,name='wbalance'),
     url(r'^wbalance_mon/(\w+)/$',views.wbalance_mon,name='wbalance_mon'),
     url(r'^wstasitc/',views.wstasitc,name='wstasitc'),
+    url(r'^cut_base/',views.cut_base,name='cut_base'),
     url(r'^economize/',views.economize,name='economize'),
     url(r'^conv/',views.show_genres,name='show_genres'),
     url(r'^dma_summary/',views.dma_summary,name='dma_summary'),
     
     url(r'^dma/(?P<path>.*)', mptt_urls.view(model='dma.models.ZoneTree', view='dma.views.sub_dma', slug_field='slug'),  name='sub_dma'),
     
+    url('tblfminfo/', views.TblfminfoList.as_view()),
     
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

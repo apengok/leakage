@@ -44,7 +44,7 @@
                                 <div id="collapse{{ forloop.counter0 }}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading{{ forloop.counter0 }}">
                                   <div>
                                     {% for sl in side.listi %}
-                                      <a href="{% url sl.href %}" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"> </span> {{ sl.name }}</a>
+                                      <a href="/dma/{{sl.href }}" class="list-group-item"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"> </span> {{ sl.name }}</a>
                                     {% endfor %}  
                                   </div>
                               </div>
