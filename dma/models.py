@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 #from django.db import models
 from django.contrib.gis.db import models
 from django.utils.functional import lazy
-from django.core.urlresolvers import reverse
+#from django.core.urlresolvers import reverse
 from django.urls import reverse
 from mptt.models import MPTTModel, TreeForeignKey
 
@@ -39,7 +39,7 @@ class Wbalance(models.Model):
     
 class ZoneTree(MPTTModel):
     name = models.CharField(max_length=50, unique=True)
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
+    parent = TreeForeignKey('self', null=True, blank=True,on_delete=models.CASCADE, related_name='children', db_index=True)
     slug = models.SlugField()
     
     def get_absolute_url(self):
@@ -91,7 +91,7 @@ class DmaZone(models.Model):
     zone_inner_pressure = models.FloatField('分区内压力（ MPa）',blank=True, null=True)
 
     #zone = models.ForeignKey(ZoneTree, on_delete=models.CASCADE,blank=True, null=True)
-    zone = TreeForeignKey(ZoneTree, verbose_name='分区选择', related_name='dmazone',null=True, blank=True)
+    zone = TreeForeignKey(ZoneTree, verbose_name='分区选择',on_delete=models.CASCADE, related_name='dmazone',null=True, blank=True)
     slug = models.SlugField()
 
     class Meta:

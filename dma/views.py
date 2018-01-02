@@ -6,8 +6,8 @@ from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from django.contrib import messages
 
 from django.views.generic import ListView
-from models import Wbalance,ZoneTree,DmaZone,Community,FlowShareDayTax,PressShareDayTax,Tblfminfo,Watermeter,HdbTianhouBig
-from dmadata import dma_tree,dma_file,summary_file,static_monthly
+from .models import Wbalance,ZoneTree,DmaZone,Community,FlowShareDayTax,PressShareDayTax,Tblfminfo,Watermeter,HdbTianhouBig
+from .dmadata import dma_tree,dma_file,summary_file,static_monthly
 from .sidecontent import side_report,side_analy_config,side_dma_manage,side_dma_meter,side_dma_service,side_pipe_check,side_premium_apply,side_press_manage,side_service_manager
 import json
 import random
