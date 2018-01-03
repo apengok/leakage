@@ -170,7 +170,7 @@ class Tblfminfo(models.Model):
         db_table = 'tblfminfo'
         
     def __unicode__(self):
-        return self.username
+        return self.simid
 
 
 class Watermeter(models.Model):

@@ -125,7 +125,7 @@ side_dma_service = [
     },
     {'header':'区内数据分析',
         'listi':[
-            {'href':'#','name':'夜间最小流量分析'},
+            {'href':'nightflow','name':'夜间最小流量分析'},
             {'href':'#','name':'漏损计算/排序'},
             {'href':'#','name':'水平衡计算'},
             {'href':'#','name':'压力评估'},

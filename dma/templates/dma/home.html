@@ -13,18 +13,167 @@
 
 
 {% block content %}
-    <h1 class="page-header">Tblinfo</h1>
+    <h1 class="page-header">ems gis info</h1>
+    
+    <div id="chart-1">{{ output|safe }}</div>
     
     <form action="{% url 'home' %}" method="post">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Submit" />
     </form>
+<h2 class="sub-header">Tblfminfo</h2>
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>userid</th>
+                <th>username</th>
+                <th>simid</th>
+                <th>reversetotalflux</th>
 
-<ul>
-{% for publisher in object_list %}
-<li>{{ publisher.username }}</li>
-{% endfor %}
-</ul>
+            </tr>
+        </thead>
+        <tbody>
+        
+            <tr>
+                <td>{{ user.userid }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.simid }}</td>
+                <td>{{ user.reversetotalflux }}</td>
+            </tr>
+        
+        </tbody>
+    </table>
+</div>
 
+<h2 class="sub-header">Community</h2>
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>name</th>
+                <th>districtid</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+        
+            <tr>
+                <td>{{ comty.id }}</td>
+                <td>{{ comty.name }}</td>
+                <td>{{ comty.districtid }}</td>
+                
+            </tr>
+        
+        </tbody>
+    </table>
+</div>
+
+<h2 class="sub-header">FlowShareDayTax</h2>
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>readtime</th>
+                <th>simid</th>
+                <th>flux</th>
+                <th>plustotalflux</th>
+                <th>reversetotalflux</th>
+
+            </tr>
+        </thead>
+        <tbody>
+        {% for flow in flow_list %}
+            <tr>
+                <td>{{ flow.readtime }}</td>
+                <td>{{ flow.simid }}</td>
+                <td>{{ flow.flux }}</td>
+                <td>{{ flow.plustotalflux }}</td>
+                <td>{{ flow.reversetotalflux }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h2 class="sub-header">PressShareDayTax</h2>
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>readtime</th>
+                <th>simid</th>
+                <th>pressure</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+        {% for press in press_list %}
+            <tr>
+                <td>{{ press.readtime }}</td>
+                <td>{{ press.simid }}</td>
+                <td>{{ press.pressure }}</td>
+                
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h2 class="sub-header">Watermeter</h2>
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>wateraddr</th>
+                <th>rvalue</th>
+                <th>fvalue</th>
+                <th>rtime</th>
+                <th>communityid</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for wm in water_list %}
+            <tr>
+                <td>{{ wm.id }}</td>
+                <td>{{ wm.wateraddr }}</td>
+                <td>{{ wm.rvalue }}</td>
+                <td>{{ wm.fvalue }}</td>
+                <td>{{ wm.rtime }}</td>
+                <td>{{ wm.communityid }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h2 class="sub-header">HdbTianhouBig</h2>
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>watermeterid</th>
+                <th>rvalue</th>
+                <th>fvalue</th>
+                <th>rtime</th>
+                <th>lastrvalue</th>
+
+            </tr>
+        </thead>
+        <tbody>
+        {% for th in th_list %}
+            <tr>
+                <td>{{ th.watermeterid }}</td>
+                <td>{{ th.rvalue }}</td>
+                <td>{{ th.fvalue }}</td>
+                <td>{{ th.rtime }}</td>
+                <td>{{ th.lastrvalue }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

@@ -24,9 +24,10 @@ urlpatterns = [
     url(r'^wstasitc/',views.wstasitc,name='wstasitc'),
     url(r'^cut_base/',views.cut_base,name='cut_base'),
     url(r'^economize/',views.economize,name='economize'),
+    url(r'^nightflow/',views.nightflow,name='nightflow'),
     url(r'^conv/',views.show_genres,name='show_genres'),
     url(r'^dma_summary/',views.dma_summary,name='dma_summary'),
-    
+    url(r'^chart/', views.chart,  name='demo'),
     url(r'^dma/(?P<path>.*)', mptt_urls.view(model='dma.models.ZoneTree', view='dma.views.sub_dma', slug_field='slug'),  name='sub_dma'),
     
     url('tblfminfo/', views.TblfminfoList.as_view()),

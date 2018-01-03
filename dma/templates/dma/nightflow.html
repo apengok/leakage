@@ -1,0 +1,10 @@
+
+{% extends 'dma/dma_service.html' %}
+
+
+{% block title %}夜间最小流量分析{% endblock %}
+
+{% block content %}
+    <h1 class="page-header">夜间最小流量分析</h1>
+    <div id="chart-1">{{ output|safe }}</div>
+{% endblock %}    
