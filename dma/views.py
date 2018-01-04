@@ -21,7 +21,7 @@ from .fusioncharts import FusionCharts
 # The `chart` method is defined to load chart data from an JSON string.
 def chart(request):
 	# Create an object for the column2d chart using the FusionCharts class constructor
-	column2d = FusionCharts("column2d", "ex1" , "600", "400", "chart-1", "json",
+	column2d = FusionCharts("column2d", "ex2" , "600", "400", "chart-1", "json",
 	 	# The data is passed as a string in the `dataSource` as parameter.
 		"""{  
 			   "chart": {  
@@ -48,17 +48,17 @@ class TblfminfoList(ListView):
 
 
 def home(request):
-    messages.info(request,'home')
+    #messages.info(request,'home')
     if request.method == 'POST':
         form = FilterForm(request.POST)
         if form.is_valid():
-            simid = form.cleaned_data['simid']
+            #simid = form.cleaned_data['simid']
             user = form.cleaned_data['user']
             
             started=form.cleaned_data['start_date']
-            ended=form.cleaned_data['end_date']
-            flow_list=FlowShareDayTax.objects.filter(readtime__range=[started,ended]).filter(simid=user.simid)
-            press_list=PressShareDayTax.objects.filter(readtime__range=[started,ended]).filter(simid=user.simid)
+            #ended=form.cleaned_data['end_date']
+            flow_list=FlowShareDayTax.objects.filter(readtime__icontains=started).filter(simid=user.simid)
+            #press_list=PressShareDayTax.objects.filter(readtime__range=[started,ended]).filter(simid=user.simid)
             
             # th_list=HdbTianhouBig
             # water_list=Watermeter
@@ -71,7 +71,7 @@ def home(request):
         user = Tblfminfo.objects.all()[0]
     return render(request,'dma/home.html',{'form':form,'flow_list':flow_list,'user':user,'press_list':press_list})
 
-#分区管理
+#
 def dma_manage(request):
     dmz = DmaZone.objects.filter(zone_name='shenzhen').values()
     #dmz = get_object_or_404(DmaZone,zone=instance)
@@ -101,28 +101,76 @@ def dma_service(request):
     {'side_content':side_dma_service})
 
 def nightflow(request):
-	# Create an object for the column2d chart using the FusionCharts class constructor
-	column2d = FusionCharts("column2d", "ex1" , "600", "400", "chart-1", "json",
-	 	# The data is passed as a string in the `dataSource` as parameter.
-		"""{  
-			   "chart": {  
-				  "caption":"Harry\'s SuperMart",
-				  "subCaption":"Top 5 stores in last month by revenue",
-				  "numberPrefix":"$",
-				  "theme":"ocean"
-			   },
-			   "data": [  
-					{"label":"Bakersfield Central", "value":"880000"},
-					{"label":"Garden Groove harbour", "value":"730000"},
-					{"label":"Los Angeles Topanga", "value":"590000"},
-					{"label":"Compton-Rancho Dom", "value":"520000"},
-					{"label":"Daly City Serramonte", "value":"330000"}
-				]
-			}""")
+    # Create an object for the column2d chart using the FusionCharts class constructor
+    flow_list=[]
+    press_list=[]
+    user = Tblfminfo.objects.all()[0]
+    if request.method == 'POST':
+        form = FilterForm(request.POST)
+        if form.is_valid():
+            
+            user = form.cleaned_data['user']
+            
+            started=form.cleaned_data['start_date']
+            print started,type(started)
+            
+            flow_list=FlowShareDayTax.objects.filter(readtime__icontains=started).filter(simid=user.simid)
+            
+            
+            # th_list=HdbTianhouBig
+            # water_list=Watermeter
+            # comty=Community
+            #return HttpResponseRedirect('/dma/tblfminfo')
+    else:
+        form = FilterForm()
+        started="day"
+        flow_list=[]
+        press_list=[]
+        user = Tblfminfo.objects.all()[0]
+        
+    if len(flow_list)>0:
+        subc = flow_list[0].readtime[:10]
+    else:
+        subc = "day"
+    cates = [{"label":v.readtime[11:]} for v in flow_list ]
+    values0 = [{"value":10} for v in flow_list ]
+    values = [{"value":v.flux} for v in flow_list ]
+    datasource = {}
+    datasource["chart"] = {
+        "caption": "夜间最小流量",
+        "subcaption": subc,
+        "xaxisname": "Time",
+        "yaxisname": "watermeter flow",
+        "numberprefix": "$",
+        "theme": "ocean"
+    }
+    datasource["categories"] = [{
+        "category": cates
+    }]
 
-	# returning complete JavaScript and HTML code, 
-	# which is used to generate chart in the browsers.
-	return  render(request, 'dma/nightflow.html', {'side_content':side_dma_service,'output' : column2d.render()})
+    datasource["dataset"] = [ {
+            "seriesname": "flow ceiling",
+            "renderas": "line",
+            "showvalues": "0",
+            "data": values0
+        }, {
+            "seriesname": "meter flow",
+            "renderas": "line",
+            "showvalues": "0",
+            "data": values
+        }
+    ]
+    column2d = FusionCharts("mscombi2d", "ex3" , "600", "400", "chart-1", "json",datasource)
+
+    # returning complete JavaScript and HTML code, 
+    # which is used to generate chart in the browsers.
+    return  render(request, 'dma/nightflow.html', {
+        'side_content':side_dma_service,
+        'output' : column2d.render(),
+        'form':form,
+        'flow_list':flow_list,
+        'user':user,
+        'press_list':press_list})
     
 
 def dma_meter(request):
@@ -173,6 +221,15 @@ def press_value(request):
     #results = [random.randint(1,10),]
     return JsonResponse({'press':sv_list})
     
+def getztree(request):
+    trees=[{name:"test1", open:true, children:[
+      {name:"test1_1"}, {name:"test1_2"}]},
+   {name:"test2", open:true, children:[
+      {name:"test2_1"}, {name:"test2_2"}]}]
+      
+    return JsonResponse({'trees':trees})
+
+
 def contact(request):
     return render(request, 'dma/home.html',{'content':['If you would like to contact me, please email me.','hskinsley@gmail.com']})
     

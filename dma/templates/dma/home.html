@@ -4,7 +4,9 @@
 {% block title %}漏损控制系统{% endblock %}
 
 
-
+{% block stylesheet %}
+{{ form.media }}
+{% endblock %}
 
 
 {% block content-header %}Tblinfo {% endblock %}
@@ -176,4 +178,39 @@
         </tbody>
     </table>
 </div>
+{% endblock %}
+
+{% block javascript %}
+<SCRIPT LANGUAGE="JavaScript">
+   var zTreeObj;
+   // zTree 的参数配置，深入使用请参考 API 文档（setting 配置详解）
+   var setting = {
+        async: {
+				enable: true,
+				url:"dma/getztree",
+				autoParam:["id", "name=n", "level=lv"],
+				otherParam:{ 'csrfmiddlewaretoken': '{{ csrf_token }}'},
+				dataFilter: null
+			}
+        };
+        
+        function filter(treeId, parentNode, childNodes) {
+			if (!childNodes) return null;
+			for (var i=0, l=childNodes.length; i<l; i++) {
+				childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
+			}
+			return childNodes;
+		}
+
+		$(document).ready(function(){
+			$.fn.zTree.init($("#treeDemo"), setting);
+		});
+  </SCRIPT>
+{% endblock %}
+
+{% block sidebar %}
+    <br><br>
+    <div>
+       <ul id="treeDemo" class="ztree"></ul>
+    </div>
 {% endblock %}

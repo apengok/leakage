@@ -4,20 +4,14 @@ from django import forms
 from .models import Wbalance,ZoneTree,DmaZone,Community,FlowShareDayTax,PressShareDayTax,Tblfminfo,Watermeter,HdbTianhouBig
 import datetime
 #from datetime import datetime
+from datetimewidget.widgets import DateWidget,DateTimeWidget
 
-TITLE_CHOICES = (
-('MR', 'Mr.'),
-('MRS', 'Mrs.'),
-('MS', 'Ms.'),
-)
-
-YEAR_CHOICES = ('2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020')
 
 class FilterForm(forms.Form):
-    simid=forms.CharField(label='SimID', max_length=100)
+    #simid=forms.CharField(label='SimID', max_length=100)
     user=forms.ModelChoiceField(queryset=Tblfminfo.objects.all())
-    start_date=forms.DateField(widget=forms.SelectDateWidget(years=YEAR_CHOICES))
-    end_date=forms.DateField(widget=forms.SelectDateWidget(years=YEAR_CHOICES))
+    start_date=forms.DateField(widget=DateWidget(usel10n=True, bootstrap_version=3))
+    #end_date=forms.DateField(widget=DateWidget(usel10n=True, bootstrap_version=3))
     
     
 class TblfminfoForm(forms.ModelForm):

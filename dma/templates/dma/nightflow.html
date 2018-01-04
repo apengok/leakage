@@ -4,7 +4,21 @@
 
 {% block title %}夜间最小流量分析{% endblock %}
 
+{% block stylesheet %}
+{{ form.media }}
+{% endblock %}
 {% block content %}
     <h1 class="page-header">夜间最小流量分析</h1>
+    <form action="{% url 'nightflow' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit" />
+    </form>
     <div id="chart-1">{{ output|safe }}</div>
 {% endblock %}    
+
+{% block rightside %}
+
+
+    
+{% endblock %}
