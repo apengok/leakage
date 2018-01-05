@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from django import forms
 from django.contrib import admin
 from mptt.admin import MPTTModelAdmin
-from .models import Wbalance,ZoneTree,DmaZone
+from .models import Wbalance,ZoneTree,DmaZone,District
 
 # Register your models here.
 
@@ -44,4 +44,5 @@ class DmaZoneAdmin(admin.ModelAdmin):
 admin.site.register(DmaZone, DmaZoneAdmin)
 
 admin.site.register(Wbalance)
+admin.site.register(District)
 #admin.site.register(ZoneTree, MPTTModelAdmin)

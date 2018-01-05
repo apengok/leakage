@@ -101,6 +101,16 @@ class DmaZone(models.Model):
     def __unicode__(self):
         return self.zone_name
         
+class District(models.Model):
+    id = models.IntegerField(db_column='Id', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(db_column='Name', unique=True, max_length=128, blank=True, null=True)  # Field name made lowercase.
+    
+    class Meta:
+        managed = True
+        db_table = 'district'        
+        
+    def __unicode__(self):
+        return self.name
 
 class Community(models.Model):
     id = models.IntegerField(db_column='Id', primary_key=True)  # Field name made lowercase.

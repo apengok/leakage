@@ -182,29 +182,100 @@
 
 {% block javascript %}
 <SCRIPT LANGUAGE="JavaScript">
-   var zTreeObj;
+var oTable;
+var districtid = 0;
+var communityid = 0;
+var buildingno = "";
+
+$(function(){
+    loadTree();
+});
+function slotSelectChanged()
+{
+	var zTree = $.fn.zTree.getZTreeObj("tree");
+	
+	var nodes = zTree.getSelectedNodes();
+	if(nodes.length)
+	{
+		var n = nodes[0];
+		if(n.type == "local")
+		{
+			districtid = 0;
+			communityid = 0;
+			buildingno = "";
+		}
+		else if(n.type == "district")
+		{
+			districtid = n.id;
+			communityid = 0;
+			buildingno = "";
+		}
+		else if(n.type == "community")
+		{
+			districtid = n.pid;
+			communityid = n.id;
+			buildingno = "";
+			
+			searchForMeterDa();
+		}
+		else
+		{
+			districtid = n.getParentNode().pid;
+			communityid = n.pid;
+			buildingno = n.name;
+			
+			searchForMeterDa();
+		}
+	}
+	else
+	{
+		districtid = 0;
+		communityid = 0;
+		buildingno = "";
+	}
+}
+
+function loadTree()
+{
+   var _this = this;
    // zTree 的参数配置，深入使用请参考 API 文档（setting 配置详解）
    var setting = {
         async: {
 				enable: true,
-				url:"dma/getztree",
-				autoParam:["id", "name=n", "level=lv"],
-				otherParam:{ 'csrfmiddlewaretoken': '{{ csrf_token }}'},
-				dataFilter: null
+			},
+        callback:{
+			onClick:function(){_this.slotSelectChanged();}
+		},
+		check: {
+			enable: false
+		},
+		data: {
+			simpleData: {
+				enable: true
 			}
-        };
-        
-        function filter(treeId, parentNode, childNodes) {
-			if (!childNodes) return null;
-			for (var i=0, l=childNodes.length; i<l; i++) {
-				childNodes[i].name = childNodes[i].name.replace(/\.n/g, '.');
-			}
-			return childNodes;
+		},
+        view: {
+			showLine: false,
+			showIcon: true,
+			selectedMulti:false,
+			expandSpeed: "fast"
 		}
-
-		$(document).ready(function(){
-			$.fn.zTree.init($("#treeDemo"), setting);
-		});
+    };
+        
+    $.ajax({
+        type:"POST",
+        url:"/dma/getztree" , 
+        dataType: "json",
+		data:{'csrfmiddlewaretoken': '{{ csrf_token }}'},
+        success:function(res){
+            var json = res['trees']				
+            $.fn.zTree.init($("#treeDemo"), setting, json);
+            var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+            
+        }
+    });
+}    
+        
   </SCRIPT>
 {% endblock %}
 

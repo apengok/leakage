@@ -6,7 +6,7 @@ from django.http import HttpResponse,JsonResponse,HttpResponseRedirect
 from django.contrib import messages
 
 from django.views.generic import ListView
-from .models import Wbalance,ZoneTree,DmaZone,Community,FlowShareDayTax,PressShareDayTax,Tblfminfo,Watermeter,HdbTianhouBig
+from .models import Wbalance,ZoneTree,DmaZone,District,Community,FlowShareDayTax,PressShareDayTax,Tblfminfo,Watermeter,HdbTianhouBig
 from .dmadata import dma_tree,dma_file,summary_file,static_monthly
 from .sidecontent import side_report,side_analy_config,side_dma_manage,side_dma_meter,side_dma_service,side_pipe_check,side_premium_apply,side_press_manage,side_service_manager
 import json
@@ -222,14 +222,36 @@ def press_value(request):
     return JsonResponse({'press':sv_list})
     
 def getztree(request):
-    trees=[{name:"test1", open:true, children:[
-      {name:"test1_1"}, {name:"test1_2"}]},
-   {name:"test2", open:true, children:[
-      {name:"test2_1"}, {name:"test2_2"}]}]
-      
+    distris = District.objects.all()
+    distris_list = [{'name':d.name} for d in distris]
+    
+    sub_dis = []
+    for d in distris:
+        tmp = {}
+        tmp['name']=d.name
+        comity = Community.objects.filter(districtid=d.id)
+        tmp['children']=[]
+        for c in comity:
+            tmp1={}
+            tmp1['name'] = c.name
+            wt = Watermeter.objects.filter(communityid=c.id)
+            wns = set([w.buildingname for w in wt])
+            tmp1['url'] = "/dma/getmeter/"+str(c.id)
+            tmp1['target'] = "_self"
+            tmp1['children'] = [{'name':s} for s in wns]
+            tmp['children'].append(tmp1)
+        #comity_list = [{'name':c.name} for c in comity]
+        #tmp['children']=comity_list
+        sub_dis.append(tmp)
+        
+    trees={'name':"歙县", 'open':'true', 'children':sub_dis}
+    
     return JsonResponse({'trees':trees})
 
 
+def getmeter(request,id):
+    return JsonResponse({'id':id})
+    
 def contact(request):
     return render(request, 'dma/home.html',{'content':['If you would like to contact me, please email me.','hskinsley@gmail.com']})
     

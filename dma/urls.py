@@ -31,6 +31,7 @@ urlpatterns = [
     url(r'^chart/', views.chart,  name='demo'),
     url(r'^dma/(?P<path>.*)', mptt_urls.view(model='dma.models.ZoneTree', view='dma.views.sub_dma', slug_field='slug'),  name='sub_dma'),
     
+    url(r'^getmeter/(.+)',views.getmeter,name='getmeter'),
     url('tblfminfo/', views.TblfminfoList.as_view()),
     
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
