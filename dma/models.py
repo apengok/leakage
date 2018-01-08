@@ -4,11 +4,14 @@ from __future__ import unicode_literals
 #from django.db import models
 from django.contrib.gis.db import models
 from django.utils.functional import lazy
+from django.db.models.signals import pre_save,post_save
+
 #from django.core.urlresolvers import reverse
 from django.urls import reverse
 from mptt.models import MPTTModel, TreeForeignKey
 
 # Create your models here.
+from .utils import unique_slug_generator
 
 
 class Wbalance(models.Model):
@@ -57,9 +60,24 @@ class ZoneTree(MPTTModel):
     def __unicode__(self):
         return self.name
         
-    
-        
-    
+#show signal how to    
+def dz_pre_save_receiver(sender,instance,*args,**kwargs):
+    print 'saving...'
+
+    if not instance.slug:
+        instance.slug = unique_slug_generator(instance)
+        instance.save()
+
+
+def dz_post_save_receiver(sender,instance,created,*args,**kwargs):
+    print 'saved'
+    if not instance.slug:
+        instance.slug = unique_slug_generator(instance)
+        instance.save()
+
+pre_save.connect(dz_pre_save_receiver,sender=ZoneTree)
+
+post_save.connect(dz_post_save_receiver,sender=ZoneTree)    
  
 
 class DmaZone(models.Model):

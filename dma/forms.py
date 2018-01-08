@@ -12,6 +12,12 @@ class FilterForm(forms.Form):
     user=forms.ModelChoiceField(queryset=Tblfminfo.objects.all())
     start_date=forms.DateField(widget=DateWidget(usel10n=True, bootstrap_version=3))
     #end_date=forms.DateField(widget=DateWidget(usel10n=True, bootstrap_version=3))
+
+    def clean_name(self):
+    	name = self.cleaned_data.get("user")
+    	if name == "Hello":
+    		raise forms.ValidationError("Not a valid name")
+    	return name
     
     
 class TblfminfoForm(forms.ModelForm):

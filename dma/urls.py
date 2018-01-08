@@ -2,12 +2,17 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import url
 from . import views
+from .view_ems import WatermeterView
 
 import mptt_urls
 
 
 urlpatterns = [
     url(r'^$',views.home,name='home'),
+
+
+    url(r'^getmeter/(?P<loc>\d+)/$',WatermeterView.as_view()),
+    #url(r'^some/(?P<slug>[\w-]+)/$',Modelclass.as_view()),
     
     url(r'^dma_manage/',views.dma_manage,name='dma_manage'),
     url(r'^dma_service/',views.dma_service,name='dma_service'),
@@ -31,7 +36,7 @@ urlpatterns = [
     url(r'^chart/', views.chart,  name='demo'),
     url(r'^dma/(?P<path>.*)', mptt_urls.view(model='dma.models.ZoneTree', view='dma.views.sub_dma', slug_field='slug'),  name='sub_dma'),
     
-    url(r'^getmeter/(.+)',views.getmeter,name='getmeter'),
+    #url(r'^getmeter/(.+)',views.getmeter,name='getmeter'),
     url('tblfminfo/', views.TblfminfoList.as_view()),
     
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

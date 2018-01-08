@@ -201,6 +201,9 @@ def report(request):
 def premium_apply(request):
     return render(request,'dma/premium_apply.html',
     {'side_content':side_premium_apply})
+
+def ems(request):
+    pass
     
 def press_value(request):
     if request.method == 'GET':
