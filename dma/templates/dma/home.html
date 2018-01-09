@@ -130,6 +130,8 @@
         <thead>
             <tr>
                 <th>id</th>
+                <th>buildingname</th>
+                <th>roomname</th>
                 <th>wateraddr</th>
                 <th>rvalue</th>
                 <th>fvalue</th>
@@ -141,6 +143,8 @@
         {% for wm in object_list %}
             <tr>
                 <td>{{ wm.id }}</td>
+                <td>{{ wm.buildingname }}</td>
+                <td>{{ wm.roomname }}</td>
                 <td>{{ wm.wateraddr }}</td>
                 <td>{{ wm.rvalue }}</td>
                 <td>{{ wm.fvalue }}</td>

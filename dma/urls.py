@@ -1,8 +1,9 @@
+
 from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import url
 from . import views
-from .view_ems import WatermeterView
+from .view_ems import WatermeterView,WatermeterBldView
 
 import mptt_urls
 
@@ -12,6 +13,7 @@ urlpatterns = [
 
 
     url(r'^getmeter/(?P<loc>\d+)/$',WatermeterView.as_view()),
+    url(r'^getmeter/(?P<loc>\d+)/(?P<bld>\d+)/$',WatermeterView.as_view()),
     #url(r'^some/(?P<slug>[\w-]+)/$',Modelclass.as_view()),
     
     url(r'^dma_manage/',views.dma_manage,name='dma_manage'),

@@ -16,6 +16,7 @@ from .fusioncharts import FusionCharts
 from django.views import View
 from django.views.generic import TemplateView,ListView
 
+
 class WatermeterView(ListView):
 	template_name = 'dma/home.html'
 
@@ -37,4 +38,37 @@ class WatermeterView(ListView):
 	def get_object(self,*args,**kwargs):
 		loc_id = self.kwargs.get("loc")
 		obj = get_object_or_404(Watermeter,communityid=int(loc))
+		return obj
+
+
+class WatermeterBldView(ListView):
+	template_name = 'dma/home.html'
+
+	def get_queryset(self):
+		print self.kwargs
+		loc = self.kwargs.get('loc')
+		bld = self.kwargs.get('bld')
+
+		bl = Watermeter.objects.filter(id=int(bld)).first()
+		bldname=bl.buildingname
+
+		if loc:
+			queryset = Watermeter.objects.filter(communityid=int(loc),buildingname_iexact=bldname)
+		else:
+			queryset = Watermeter.objects.none()
+		return queryset
+	
+	def get_context_data(self,*args,**kwargs):
+		print self.kwargs
+		context = super(WatermeterView,self).get_context_data(*args,**kwargs)
+		print context
+		return context
+
+	def get_object(self,*args,**kwargs):
+		loc_id = self.kwargs.get("loc")
+		bld = self.kwargs.get('bld')
+
+		bl = Watermeter.objects.filter(id=int(bld)).first()
+		bldname=bl.buildingname
+		obj = get_object_or_404(Watermeter,communityid=int(loc),buildingname_iexact=bldname)
 		return obj

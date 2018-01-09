@@ -237,11 +237,17 @@ def getztree(request):
         for c in comity:
             tmp1={}
             tmp1['name'] = c.name
-            wt = Watermeter.objects.filter(communityid=c.id)
-            wns = set([w.buildingname for w in wt])
+            wt = Watermeter.objects.filter(communityid=c.id).distinct('buildingname')
+            #wns = set([w.buildingname for w in wt])
             tmp1['url'] = "/dma/getmeter/"+str(c.id)
             tmp1['target'] = "_self"
-            tmp1['children'] = [{'name':s} for s in wns]
+            tmp1['children'] = [] #[{'name':s} for s in wns]
+            for w in wt:
+                tmp2 = {}
+                tmp2['name'] = w.buildingname
+                tmp2['url'] = "/dma/getmeter/{0}/{1}".format(str(c.id),w.id)
+                tmp2['target'] = "_self"
+                tmp1['children'].append(tmp2)
             tmp['children'].append(tmp1)
         #comity_list = [{'name':c.name} for c in comity]
         #tmp['children']=comity_list
